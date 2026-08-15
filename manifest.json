@@ -1,0 +1,27 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Prefi",
+  "orientation": "any",
+  "scope": "/Prefi/",
+  "short_name": "Prefi",
+  "start_url": "/Prefi/",
+  "theme_color": "#FFFFFF",
+  "id": "Prefi",
+  "description": "Control claro de tus negocios y cobros",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
