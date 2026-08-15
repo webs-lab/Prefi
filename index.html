@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#FFFFFF">
+<title>Prefi</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap');
+
+:root{
+  --bg:#FFFFFF;
+  --surface:#FFFFFF;
+  --surface2:#EEF2EC;
+  --ink:#14201A;
+  --ink-dim:#6E7D72;
+  --green:#16A34A;
+  --green-dim:#D7F5DE;
+  --amber:#B45309;
+  --amber-tint:#FEF3C7;
+  --red:#DC2626;
+  --line:#E5E9E1;
+  --rule:#00000009;
+  --btn-ink:#FFFFFF;
+  --shadow:0 2px 8px rgba(20,32,26,.08);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html{height:100%; margin:0; background:#FFFFFF; overscroll-behavior:none;}
+body{
+  height:100%; margin:0;
+  background:#FFFFFF; color:var(--ink); font-family:'Inter',sans-serif;
+  display:flex; align-items:center; justify-content:center;
+  min-height:100vh; min-height:100dvh; overflow:hidden; user-select:none;
+  overscroll-behavior:none;
+}
+.app{
+  width:100%; max-width:430px; height:100vh; height:100dvh;
+  background:#FFFFFF;
+  display:flex; flex-direction:column;
+  padding:calc(20px + env(safe-area-inset-top)) calc(18px + env(safe-area-inset-right)) calc(26px + env(safe-area-inset-bottom)) calc(18px + env(safe-area-inset-left));
+  position:relative;
+}
+.hidden{ display:none !important; }
+.display{ font-family:'Space Grotesk',sans-serif; }
+.mono{ font-family:'JetBrains Mono',monospace; }
+::placeholder{ color:var(--ink-dim); opacity:.7; }
+
+/* ---------- top bar ---------- */
+.topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.topbar h1{ font-size:24px; font-weight:700; margin:0; }
+.logo{ font-size:24px; font-weight:700; margin:0; letter-spacing:-.02em; }
+.logo .accent{ color:var(--green); }
+.icon-btn{
+  width:38px; height:38px; border-radius:12px; background:var(--surface);
+  border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+  font-size:18px; cursor:pointer; color:var(--ink);
+}
+
+/* ---------- list ---------- */
+.list-screen{ flex:1; display:flex; flex-direction:column; overflow:hidden; position:relative; }
+.list-subtitle{ font-size:13px; color:var(--ink-dim); margin:-10px 0 4px; }
+.list-wrap{ flex:1; display:flex; flex-direction:column; gap:12px; overflow-y:auto; padding-bottom:10px; }
+.welcome{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:6px; padding:0 8px; }
+.welcome-greet{ font-size:15px; color:var(--ink-dim); font-weight:500; }
+.welcome-logo{ font-size:42px; font-weight:700; letter-spacing:-.02em; margin-bottom:10px; }
+.welcome-logo .accent{ color:var(--green); }
+.welcome p{ font-size:14px; color:var(--ink-dim); line-height:1.5; max-width:280px; margin:0; }
+
+/* ---------- fondo vivo de bienvenida ---------- */
+.welcome-bg{
+  margin:-20px -18px -26px -18px; padding:20px 18px 26px 18px;
+  background:
+    radial-gradient(circle at 64% 38%, #BEF264 0%, transparent 40%),
+    radial-gradient(circle at 88% 12%, #10B981 0%, transparent 48%),
+    radial-gradient(circle at 80% 85%, #052E1F 0%, transparent 55%),
+    radial-gradient(circle at 10% 82%, #34D399 0%, transparent 46%),
+    linear-gradient(160deg, #064E3B 0%, #052E1F 100%);
+  overflow:hidden;
+}
+.welcome-bg .topbar{ display:none; }
+.welcome-bg::before, .welcome-bg::after{
+  content:''; position:absolute; border-radius:50%; filter:blur(70px); pointer-events:none;
+}
+.welcome-bg::before{ width:230px; height:230px; background:#A3E635; opacity:.5; top:-40px; left:-50px; animation:blobA 16s ease-in-out infinite; }
+.welcome-bg::after{ width:260px; height:260px; background:#059669; opacity:.55; bottom:-70px; right:-50px; animation:blobB 20s ease-in-out infinite; }
+@keyframes blobA{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(26px,34px) scale(1.08); } }
+@keyframes blobB{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(-22px,-30px) scale(1.06); } }
+.welcome-bg .welcome{ position:relative; z-index:1; }
+.welcome-bg .welcome-greet{ color:rgba(255,255,255,.82); animation:fadeUp .6s ease both; }
+.welcome-bg .welcome-logo{ color:#FFFFFF; text-shadow:0 4px 24px rgba(0,0,0,.18); font-size:46px; animation:fadeUp .6s .08s ease both; }
+.welcome-bg .welcome-logo .accent{ color:var(--green); }
+.welcome-bg .welcome p{ color:rgba(255,255,255,.78); animation:fadeUp .6s .16s ease both; }
+@keyframes fadeUp{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
+@media (prefers-reduced-motion: reduce){
+  .welcome-bg::before, .welcome-bg::after{ animation:none; }
+  .welcome-bg .welcome-greet, .welcome-bg .welcome-logo, .welcome-bg .welcome p{ animation:none; }
+}
+
+.ncard{
+  position:relative; background:var(--surface); border-radius:16px; padding:14px 16px 12px;
+  border:1px solid var(--line); cursor:pointer; box-shadow:var(--shadow);
+  background-image:repeating-linear-gradient(var(--rule) 0 1px, transparent 1px 30px);
+}
+.ncard-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
+.ncard-name{ font-weight:700; font-size:16px; }
+.ncard-date{ font-size:11.5px; color:var(--ink-dim); }
+.pbar{ height:9px; border-radius:6px; background:var(--surface2); overflow:hidden; }
+.pbar-fill{ height:100%; background:linear-gradient(90deg, var(--green-dim), var(--green)); border-radius:6px; transition:width .3s ease; }
+.ncard-bottom{ display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:12.5px; }
+.ncard-bottom .amt{ color:var(--ink-dim); }
+.ncard-bottom .pct{ font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--green); }
+.mora-tag{ font-size:10.5px; color:var(--amber); margin-top:5px; }
+.paid-badge{
+  position:absolute; top:12px; right:14px; font-size:10px; font-weight:700; color:var(--green);
+  border:1px solid var(--green); border-radius:8px; padding:2px 7px; transform:rotate(-6deg);
+}
+
+.fab{
+  align-self:center; margin-top:12px;
+  background:var(--green); color:var(--btn-ink); border:none; font-weight:700; font-size:15px;
+  padding:14px 30px; border-radius:100px; cursor:pointer; box-shadow:0 4px 12px rgba(22,163,74,.28);
+}
+.fab:active{ transform:scale(.97); }
+.welcome-bg .fab{
+  position:relative; z-index:1;
+  background:#FFFFFF; color:#14532D; font-weight:800; font-size:16px;
+  padding:16px 34px; box-shadow:0 10px 28px rgba(0,0,0,.28);
+  animation:fadeUp .6s .24s ease both;
+}
+
+/* ---------- form ---------- */
+.form-screen{ flex:1; display:flex; flex-direction:column; overflow-y:auto; gap:14px; padding-bottom:10px; }
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field label{ font-size:12.5px; color:var(--ink-dim); font-weight:600; }
+.field input, .field select{
+  background:var(--surface2); border:1px solid var(--line); border-radius:12px;
+  padding:12px 14px; color:var(--ink); font-size:16px; font-family:'Inter',sans-serif;
+}
+.field input:focus, .field select:focus{ outline:none; border-color:var(--green); }
+.toggle-row{ display:flex; justify-content:space-between; align-items:center; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
+.switch{ width:44px; height:26px; border-radius:20px; background:var(--surface2); border:1px solid var(--line); position:relative; cursor:pointer; flex-shrink:0; transition:background .2s ease, border-color .2s ease; }
+.switch .knob{ width:20px; height:20px; border-radius:50%; background:#FFFFFF; box-shadow:0 1px 3px rgba(0,0,0,.25); position:absolute; top:2px; left:2px; transition:left .2s ease; }
+.switch.on{ background:var(--green); border-color:var(--green); }
+.switch.on .knob{ left:20px; }
+.sub-fields{ display:flex; flex-direction:column; gap:12px; padding-left:2px; }
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+/* ---------- detail ---------- */
+.detail-screen{ flex:1; display:flex; flex-direction:column; overflow-y:auto; gap:16px; padding-bottom:10px; }
+.detail-head{ text-align:center; }
+.detail-head .name{ font-size:20px; font-weight:700; }
+.detail-head .date{ font-size:12.5px; color:var(--ink-dim); margin-top:2px; }
+.saldo-num{ text-align:center; font-size:38px; font-weight:700; margin:4px 0; }
+.saldo-lbl{ text-align:center; font-size:12px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:.06em; margin-top:-14px; }
+.pbar.big{ height:14px; }
+.breakdown{
+  background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px 16px;
+  display:flex; flex-direction:column; gap:9px; box-shadow:var(--shadow);
+  background-image:repeating-linear-gradient(var(--rule) 0 1px, transparent 1px 30px);
+}
+.brow{ display:flex; justify-content:space-between; font-size:13.5px; }
+.brow .lbl{ color:var(--ink-dim); }
+.brow .val{ font-family:'JetBrains Mono',monospace; font-weight:600; }
+.brow.amber .val{ color:var(--amber); }
+.mora-note{ font-size:12px; color:var(--amber); background:var(--amber-tint); border:1px solid color-mix(in srgb, var(--amber) 35%, transparent); border-radius:10px; padding:9px 12px; }
+.interest-section{ display:flex; flex-direction:column; gap:7px; }
+.interest-label{ display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; color:var(--ink-dim); font-weight:600; }
+.interest-label .val{ color:var(--amber); font-weight:700; }
+.pbar-fill.amber{ background:linear-gradient(90deg, #FDE68A, var(--amber)); }
+.interest-sub{ font-size:11.5px; color:var(--ink-dim); line-height:1.4; }
+
+.abono-form{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow); }
+.abono-list{ display:flex; flex-direction:column; gap:8px; }
+.abono-row{ display:flex; justify-content:space-between; align-items:center; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:10px 14px; box-shadow:var(--shadow); }
+.abono-row .amt{ font-family:'JetBrains Mono',monospace; font-weight:600; }
+.abono-row .date{ font-size:11.5px; color:var(--ink-dim); }
+.abono-row .del{ color:var(--red); font-size:16px; cursor:pointer; padding:2px 6px; }
+
+.btn{
+  font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15.5px;
+  color:var(--btn-ink); background:var(--green); border:none; padding:14px; border-radius:14px; cursor:pointer;
+}
+.btn:active{ transform:scale(.98); }
+.btn.ghost{ background:transparent; color:var(--ink); border:1px solid var(--line); }
+.btn.danger{ background:transparent; color:var(--red); border:1px solid color-mix(in srgb, var(--red) 40%, transparent); }
+
+.toast{
+  position:absolute; top:60px; left:50%; transform:translateX(-50%) translateY(-8px);
+  background:var(--surface); border:1.5px solid var(--green); color:var(--green);
+  font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13px;
+  padding:8px 16px; border-radius:12px; opacity:0; pointer-events:none; transition:all .25s ease; z-index:20;
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+.modal-overlay{ position:fixed; inset:0; background:rgba(20,32,26,.45); display:flex; align-items:center; justify-content:center; z-index:50; padding:24px; }
+.modal-card{ background:var(--surface); border-radius:18px; padding:20px; width:100%; max-width:360px; display:flex; flex-direction:column; gap:12px; box-shadow:0 12px 32px rgba(20,32,26,.28); }
+.modal-card h3{ margin:0; font-size:16px; font-family:'Space Grotesk',sans-serif; }
+.modal-card p{ margin:0; font-size:13px; color:var(--ink-dim); line-height:1.5; }
+.modal-card input{ background:var(--surface2); border:1px solid var(--line); border-radius:10px; padding:11px 12px; font-size:12px; font-family:'JetBrains Mono',monospace; color:var(--ink); width:100%; }
+.modal-actions{ display:flex; gap:10px; }
+.modal-actions .btn{ flex:1; padding:12px; font-size:14px; }
+
+@media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="toast" id="toast"></div>
+
+  <!-- LIST -->
+  <div class="list-screen" id="listScreen">
+    <div class="topbar"><h1 class="logo">Pre<span class="accent">fi</span></h1></div>
+    <div class="list-subtitle hidden" id="listSubtitle">Tus negocios</div>
+    <div class="list-wrap" id="listWrap"></div>
+    <button class="fab" id="newBtn">+ Nuevo negocio</button>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-screen hidden" id="formScreen">
+    <div class="topbar"><div class="icon-btn" id="formBack">←</div><h1 class="display" style="font-size:19px;">Nuevo negocio</h1><div style="width:38px;"></div></div>
+
+    <div class="field"><label>Nombre de la persona</label><input type="text" id="fName"></div>
+    <div class="field"><label>Valor del negocio (COP)</label><input type="number" id="fValor"></div>
+    <div class="field"><label>Fecha del negocio</label><input type="date" id="fFecha"></div>
+
+    <div class="toggle-row">
+      <span style="font-size:14px; font-weight:600;">Cobrar interés por mora</span>
+      <div class="switch" id="interesSwitch"><div class="knob"></div></div>
+    </div>
+
+    <div class="sub-fields hidden" id="interesFields">
+      <div class="field"><label>Días antes de que empiece a subir el interés</label><input type="number" id="fGracia" placeholder="Ej: 20"></div>
+      <div class="grid2">
+        <div class="field"><label>% de interés por periodo</label><input type="number" id="fPorcentaje" placeholder="Ej: 1" step="0.1"></div>
+        <div class="field"><label>Frecuencia</label>
+          <select id="fFrecuencia">
+            <option value="1">Cada día</option>
+            <option value="3">Cada 3 días</option>
+            <option value="7">Cada semana</option>
+          </select>
+        </div>
+      </div>
+      <div style="font-size:11.5px; color:var(--ink-dim);">El interés se acumula hasta un máximo del 100% del valor del negocio.</div>
+    </div>
+
+    <div style="flex:1;"></div>
+    <button class="btn" id="saveBtn">Guardar negocio</button>
+  </div>
+
+  <!-- DETAIL -->
+  <div class="detail-screen hidden" id="detailScreen">
+    <div class="topbar"><div class="icon-btn" id="detailBack">←</div><div style="width:38px;"></div><div style="width:38px;"></div></div>
+    <div class="detail-head">
+      <div class="name" id="dName"></div>
+      <div class="date" id="dDate"></div>
+    </div>
+    <div class="saldo-num mono" id="dSaldo"></div>
+    <div class="saldo-lbl">Saldo pendiente</div>
+    <div class="pbar big"><div class="pbar-fill" id="dBarFill"></div></div>
+
+    <div id="interestBox"></div>
+
+    <div class="breakdown">
+      <div class="brow"><span class="lbl">Valor original</span><span class="val mono" id="dValor"></span></div>
+      <div class="brow amber" id="dInteresRow"><span class="lbl">Interés acumulado</span><span class="val mono" id="dInteres"></span></div>
+      <div class="brow"><span class="lbl">Total a pagar</span><span class="val mono" id="dTotal"></span></div>
+      <div class="brow"><span class="lbl">Abonado</span><span class="val mono" id="dAbonado"></span></div>
+    </div>
+
+    <button class="btn" id="showAbonoForm">Registrar abono</button>
+    <div class="abono-form hidden" id="abonoForm">
+      <div class="field"><label>Monto abonado (COP)</label><input type="number" id="aMonto" placeholder="Ej: 40000"></div>
+      <div class="field"><label>Fecha</label><input type="date" id="aFecha"></div>
+      <button class="btn" id="addAbonoBtn">Agregar abono</button>
+    </div>
+
+    <button class="btn ghost" id="shareImgBtn">📤 Compartir estado con <span id="shareName"></span></button>
+
+    <div>
+      <div style="font-size:12.5px; color:var(--ink-dim); font-weight:600; margin-bottom:8px;">Historial de abonos</div>
+      <div class="abono-list" id="abonoList"></div>
+    </div>
+
+    <button class="btn danger" id="deleteBtn">Eliminar negocio</button>
+  </div>
+
+  <!-- Imagen del comprobante generada + respaldo para guardar/compartir -->
+  <div class="modal-overlay hidden" id="imageModal">
+    <div class="modal-card">
+      <h3>Comprobante listo</h3>
+      <p>Mantén presionada la imagen para guardarla o compartirla directamente, o descárgala.</p>
+      <img id="receiptImg" style="width:100%; border-radius:12px; border:1px solid var(--line); display:block;">
+      <div class="modal-actions">
+        <button class="btn ghost" id="imageModalClose">Cerrar</button>
+        <a class="btn" id="imageDownloadBtn" download="prefi.png" style="text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center;">Descargar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'fiado:negocios';
+  let negocios = [];
+  let currentId = null;
+  const $ = id => document.getElementById(id);
+
+  function todayISO(){ return new Date().toISOString().slice(0,10); }
+  function fmtCOP(n){ return '$' + Math.round(n).toLocaleString('es-CO'); }
+  function fmtDate(iso){
+    const d = new Date(iso+'T00:00:00');
+    return d.toLocaleDateString('es-CO', {day:'numeric', month:'short', year:'numeric'});
+  }
+  function daysBetween(iso){
+    const start = new Date(iso+'T00:00:00');
+    const now = new Date(); now.setHours(0,0,0,0);
+    return Math.floor((now-start)/86400000);
+  }
+  function addDays(iso, days){
+    const d = new Date(iso+'T00:00:00');
+    d.setDate(d.getDate()+days);
+    return d.toISOString().slice(0,10);
+  }
+  function roundRectPath(ctx,x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+  async function ensureFonts(){
+    try{
+      await Promise.all([
+        document.fonts.load('700 60px "Space Grotesk"'),
+        document.fonts.load('500 30px "Inter"'),
+        document.fonts.load('700 34px "JetBrains Mono"'),
+      ]);
+    }catch(e){}
+  }
+  async function renderReceiptCanvas(n){
+    await ensureFonts();
+    const s = computeStats(n);
+    const W=1080, H=1350, pad=80;
+    const canvas = document.createElement('canvas');
+    canvas.width=W; canvas.height=H;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle='#FFFFFF'; ctx.fillRect(0,0,W,H);
+
+    let y = 120;
+    ctx.font='700 56px "Space Grotesk"'; ctx.textAlign='left';
+    ctx.fillStyle='#14201A'; ctx.fillText('Pre', pad, y);
+    const preW = ctx.measureText('Pre').width;
+    ctx.fillStyle='#16A34A'; ctx.fillText('fi', pad+preW, y);
+
+    y += 60;
+    ctx.strokeStyle='#E5E9E1'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(W-pad,y); ctx.stroke();
+
+    y += 80;
+    ctx.font='500 30px "Inter"'; ctx.fillStyle='#6E7D72';
+    ctx.fillText('Negocio con', pad, y);
+
+    y += 66;
+    let nameSize = 62;
+    ctx.font = `700 ${nameSize}px "Space Grotesk"`;
+    while(ctx.measureText(n.nombre).width > (W-2*pad) && nameSize>32){
+      nameSize -= 4; ctx.font = `700 ${nameSize}px "Space Grotesk"`;
+    }
+    ctx.fillStyle='#14201A'; ctx.fillText(n.nombre, pad, y);
+
+    y += 44;
+    ctx.font='400 28px "Inter"'; ctx.fillStyle='#6E7D72';
+    ctx.fillText('Desde el ' + fmtDate(n.fecha), pad, y);
+
+    y += 90;
+    ctx.font='600 24px "Inter"'; ctx.fillStyle='#6E7D72';
+    ctx.fillText('SALDO PENDIENTE', pad, y);
+
+    y += 96;
+    let saldoSize = 96;
+    const saldoTxt = fmtCOP(s.saldo);
+    ctx.font = `700 ${saldoSize}px "JetBrains Mono"`;
+    while(ctx.measureText(saldoTxt).width > (W-2*pad) && saldoSize>44){
+      saldoSize -= 4; ctx.font = `700 ${saldoSize}px "JetBrains Mono"`;
+    }
+    ctx.fillStyle='#14201A'; ctx.fillText(saldoTxt, pad, y);
+
+    y += 60;
+    const barW = W-pad*2, barH = 26;
+    roundRectPath(ctx, pad, y, barW, barH, 13);
+    ctx.fillStyle='#EEF2EC'; ctx.fill();
+    const fillW = Math.max(barH, barW*(s.progreso/100));
+    roundRectPath(ctx, pad, y, fillW, barH, 13);
+    ctx.fillStyle='#16A34A'; ctx.fill();
+
+    y += 56;
+    ctx.font='600 28px "JetBrains Mono"'; ctx.fillStyle='#16A34A'; ctx.textAlign='right';
+    ctx.fillText(Math.round(s.progreso)+'% pagado', W-pad, y);
+    ctx.textAlign='left';
+
+    y += 70;
+    ctx.strokeStyle='#E5E9E1';
+    ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(W-pad,y); ctx.stroke();
+
+    function row(label, value, color){
+      y += 74;
+      ctx.font='500 30px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
+      ctx.fillText(label, pad, y);
+      ctx.font='700 34px "JetBrains Mono"'; ctx.fillStyle=color||'#14201A'; ctx.textAlign='right';
+      ctx.fillText(value, W-pad, y);
+      ctx.textAlign='left';
+    }
+    y += 16;
+    row('Valor original', fmtCOP(n.valor));
+    if(s.interesMonto>0) row('Interés acumulado', fmtCOP(s.interesMonto)+' ('+Math.round(s.interesPercent)+'%)', '#B45309');
+    row('Total a pagar', fmtCOP(s.total));
+    row('Abonado', fmtCOP(s.abonado), '#16A34A');
+
+    if(n.interes && n.interes.activo){
+      const diasT = daysBetween(n.fecha);
+      const gracia = n.interes.gracia;
+      const barW2 = W-pad*2, barH2 = 26;
+
+      if(diasT < gracia){
+        // Fase de gracia: barra de cuenta regresiva antes de que empiece el interés
+        const pct = Math.min(100, (diasT/Math.max(1,gracia))*100);
+        const faltan = gracia - diasT;
+
+        y += 66;
+        ctx.font='600 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
+        ctx.fillText('DÍAS PARA QUE EMPIECE EL INTERÉS', pad, y);
+        ctx.font='700 30px "JetBrains Mono"'; ctx.fillStyle='#B45309'; ctx.textAlign='right';
+        ctx.fillText(Math.round(pct)+'%', W-pad, y);
+        ctx.textAlign='left';
+
+        y += 34;
+        roundRectPath(ctx, pad, y, barW2, barH2, 13);
+        ctx.fillStyle='#FEF3C7'; ctx.fill();
+        const fillW2 = Math.max(barH2, barW2*(pct/100));
+        roundRectPath(ctx, pad, y, fillW2, barH2, 13);
+        ctx.fillStyle='#B45309'; ctx.fill();
+
+        y += 52;
+        ctx.font='400 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
+        ctx.fillText(`Faltan ${faltan} ${faltan===1?'día':'días'} · empieza a subir el ${fmtDate(addDays(n.fecha, gracia))}`, pad, y);
+
+      } else if(s.interesMonto>0){
+        // Fase activa: barra de interés acumulado, igual a la del detalle
+        y += 66;
+        ctx.font='600 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
+        ctx.fillText('INTERÉS ACUMULADO', pad, y);
+        ctx.font='700 30px "JetBrains Mono"'; ctx.fillStyle='#B45309'; ctx.textAlign='right';
+        ctx.fillText(Math.round(s.interesPercent)+'%', W-pad, y);
+        ctx.textAlign='left';
+
+        y += 34;
+        roundRectPath(ctx, pad, y, barW2, barH2, 13);
+        ctx.fillStyle='#FEF3C7'; ctx.fill();
+        const fillW2 = Math.max(barH2, barW2*(s.interesPercent/100));
+        roundRectPath(ctx, pad, y, fillW2, barH2, 13);
+        ctx.fillStyle='#B45309'; ctx.fill();
+
+        y += 52;
+        ctx.font='400 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
+        ctx.fillText(`${s.diasMora} ${s.diasMora===1?'día':'días'} de mora · sube ${n.interes.porcentaje}% cada ${n.interes.frecuencia===1?'día':n.interes.frecuencia+' días'} (tope 100%)`, pad, y);
+      }
+    }
+
+    ctx.font='400 24px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
+    ctx.fillText('Generado el ' + fmtDate(todayISO()), pad, H-70);
+    ctx.font='700 26px "Space Grotesk"'; ctx.fillStyle='#16A34A'; ctx.textAlign='right';
+    ctx.fillText('Prefi', W-pad, H-70);
+    ctx.textAlign='left';
+
+    return canvas;
+  }
+  function slug(str){ return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-'); }
+
+  async function loadNegocios(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw) negocios = JSON.parse(raw);
+    }catch(e){ console.error('No se pudo cargar', e); }
+  }
+  async function saveNegocios(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(negocios)); }
+    catch(e){ console.error('No se pudo guardar', e); }
+  }
+  function showToast(text){
+    const t = $('toast');
+    t.textContent = text; t.classList.add('show');
+    clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 1500);
+  }
+
+  function showScreen(id){
+    ['listScreen','formScreen','detailScreen'].forEach(s=>{
+      $(s).classList.toggle('hidden', s!==id);
+    });
+  }
+
+  /* ---------------- CALC ---------------- */
+  function computeStats(n){
+    const abonado = n.abonos.reduce((s,a)=>s+a.monto, 0);
+    let interesPercent = 0, diasMora = 0;
+    if(n.interes && n.interes.activo){
+      const dias = daysBetween(n.fecha);
+      diasMora = Math.max(0, dias - n.interes.gracia);
+      const periodos = Math.floor(diasMora / n.interes.frecuencia);
+      interesPercent = Math.min(100, periodos * n.interes.porcentaje);
+    }
+    const interesMonto = n.valor * (interesPercent/100);
+    const total = n.valor + interesMonto;
+    const saldo = Math.max(0, total - abonado);
+    const progreso = total>0 ? Math.min(100, (abonado/total)*100) : 0;
+    return { abonado, interesPercent, interesMonto, total, saldo, progreso, diasMora };
+  }
+
+  /* ---------------- LIST ---------------- */
+  function renderList(){
+    const wrap = $('listWrap');
+    const subtitle = $('listSubtitle');
+    if(negocios.length===0){
+      $('listScreen').classList.add('welcome-bg');
+      $('newBtn').textContent = 'Comenzar nuevo negocio';
+      subtitle.classList.add('hidden');
+      wrap.className = 'welcome';
+      wrap.innerHTML = `
+        <div class="welcome-greet">Bienvenido a</div>
+        <div class="welcome-logo">Pre<span class="accent">fi</span></div>
+        <p>Aquí llevas el control claro de tus negocios y cobros: cuánto te deben, cuánto te han abonado y si hay intereses por mora.</p>
+      `;
+      return;
+    }
+    $('listScreen').classList.remove('welcome-bg');
+    $('newBtn').textContent = '+ Nuevo negocio';
+    subtitle.classList.remove('hidden');
+    wrap.className = 'list-wrap';
+    wrap.innerHTML = '';
+    // most recent first
+    [...negocios].sort((a,b)=> b.fecha.localeCompare(a.fecha)).forEach(n=>{
+      const s = computeStats(n);
+      const card = document.createElement('div');
+      card.className = 'ncard';
+      card.innerHTML = `
+        ${s.saldo<=0 ? '<div class="paid-badge">PAGADO</div>' : ''}
+        <div class="ncard-top">
+          <div class="ncard-name">${n.nombre}</div>
+          <div class="ncard-date">${fmtDate(n.fecha)}</div>
+        </div>
+        <div class="pbar"><div class="pbar-fill" style="width:${s.progreso}%;"></div></div>
+        <div class="ncard-bottom">
+          <span class="amt">${fmtCOP(s.abonado)} de ${fmtCOP(s.total)}</span>
+          <span class="pct">${Math.round(s.progreso)}%</span>
+        </div>
+        ${s.interesMonto>0 ? `<div class="mora-tag">⚠ ${s.diasMora} días de mora · +${fmtCOP(s.interesMonto)} de interés</div>` : ''}
+      `;
+      card.onclick = ()=> openDetail(n.id);
+      wrap.appendChild(card);
+    });
+  }
+
+  /* ---------------- FORM ---------------- */
+  let interesActivo = false;
+  $('newBtn').onclick = ()=>{
+    $('fName').value=''; $('fValor').value=''; $('fFecha').value = todayISO();
+    $('fGracia').value=''; $('fPorcentaje').value='1'; $('fFrecuencia').value='1';
+    interesActivo = false;
+    $('interesSwitch').classList.remove('on');
+    $('interesFields').classList.add('hidden');
+    showScreen('formScreen');
+  };
+  $('formBack').onclick = ()=>{ renderList(); showScreen('listScreen'); };
+  $('interesSwitch').onclick = ()=>{
+    interesActivo = !interesActivo;
+    $('interesSwitch').classList.toggle('on', interesActivo);
+    $('interesFields').classList.toggle('hidden', !interesActivo);
+  };
+  $('saveBtn').onclick = async ()=>{
+    const nombre = $('fName').value.trim();
+    const valor = parseFloat($('fValor').value);
+    const fecha = $('fFecha').value || todayISO();
+    if(!nombre){ showToast('Escribe el nombre de la persona'); return; }
+    if(!valor || valor<=0){ showToast('Escribe un valor válido'); return; }
+    const negocio = {
+      id: Date.now().toString(),
+      nombre, valor, fecha,
+      abonos: [],
+      interes: interesActivo ? {
+        activo:true,
+        gracia: parseInt($('fGracia').value)||0,
+        porcentaje: parseFloat($('fPorcentaje').value)||1,
+        frecuencia: parseInt($('fFrecuencia').value)||1
+      } : { activo:false, gracia:0, porcentaje:0, frecuencia:1 }
+    };
+    negocios.push(negocio);
+    await saveNegocios();
+    renderList();
+    showScreen('listScreen');
+    showToast('Negocio guardado');
+  };
+
+  /* ---------------- DETAIL ---------------- */
+  function openDetail(id){
+    currentId = id;
+    $('abonoForm').classList.add('hidden');
+    $('aFecha').value = todayISO();
+    $('aMonto').value = '';
+    renderDetail();
+    showScreen('detailScreen');
+  }
+  function buildInterestHistory(n, s){
+    const gracia = n.interes.gracia, frecuencia = n.interes.frecuencia, porcentaje = n.interes.porcentaje;
+    const periodos = Math.floor(s.diasMora / frecuencia);
+    if(periodos<=0) return '';
+    const incremento = n.valor * (porcentaje/100);
+    const maxShow = 30;
+    const start = Math.max(1, periodos-maxShow+1);
+    let rows = '';
+    for(let i=periodos; i>=start; i--){
+      const periodDate = addDays(n.fecha, gracia + i*frecuencia);
+      const cumPercent = Math.min(100, i*porcentaje);
+      const cumMonto = n.valor * (cumPercent/100);
+      rows += `<div class="abono-row"><div><div class="amt mono" style="color:var(--amber);">+${fmtCOP(incremento)}</div><div class="date">${fmtDate(periodDate)} · acumulado ${Math.round(cumPercent*10)/10}% (${fmtCOP(cumMonto)})</div></div></div>`;
+    }
+    const hiddenNote = periodos>maxShow ? `<div class="interest-sub" style="text-align:center; padding-top:2px;">Mostrando los últimos ${maxShow} de ${periodos} periodos</div>` : '';
+    return `
+      <div style="margin-top:2px;">
+        <div style="font-size:12.5px; color:var(--ink-dim); font-weight:600; margin-bottom:8px;">Historial de interés · ${s.diasMora} ${s.diasMora===1?'día activo':'días activo'} · ${periodos} ${periodos===1?'periodo cumplido':'periodos cumplidos'}</div>
+        <div class="abono-list">${rows}</div>
+        ${hiddenNote}
+      </div>`;
+  }
+  function renderInterestSection(n, s){
+    const box = $('interestBox');
+    if(!n.interes || !n.interes.activo){ box.innerHTML=''; return; }
+
+    const diasT = daysBetween(n.fecha);
+    const gracia = n.interes.gracia;
+
+    if(diasT < gracia){
+      // Fase 1: cuenta regresiva antes de que empiece el interés
+      const pct = Math.min(100, (diasT/Math.max(1,gracia))*100);
+      const faltan = gracia - diasT;
+      box.innerHTML = `
+        <div class="interest-section">
+          <div class="interest-label"><span>Días para que empiece el interés</span><span class="val mono">${Math.round(pct)}%</span></div>
+          <div class="pbar"><div class="pbar-fill amber" style="width:${pct}%;"></div></div>
+          <div class="interest-sub">Faltan ${faltan} ${faltan===1?'día':'días'} · el interés empieza a subir el ${fmtDate(addDays(n.fecha, gracia))}</div>
+        </div>`;
+    } else {
+      // Fase 2: el interés ya está activo y subiendo
+      box.innerHTML = `
+        <div class="interest-section">
+          <div class="interest-label"><span>Interés acumulado</span><span class="val mono">${Math.round(s.interesPercent)}%</span></div>
+          <div class="pbar"><div class="pbar-fill amber" style="width:${s.interesPercent}%;"></div></div>
+          <div class="interest-sub">+${fmtCOP(s.interesMonto)} sobre el valor original · sube ${n.interes.porcentaje}% cada ${n.interes.frecuencia===1?'día':n.interes.frecuencia+' días'} (tope 100%)</div>
+        </div>
+        ${buildInterestHistory(n, s)}`;
+    }
+  }
+  function renderDetail(){
+    const n = negocios.find(x=>x.id===currentId);
+    if(!n) return;
+    const s = computeStats(n);
+    $('dName').textContent = n.nombre;
+    $('dDate').textContent = fmtDate(n.fecha);
+    $('shareName').textContent = n.nombre;
+    $('dSaldo').textContent = fmtCOP(s.saldo);
+    $('dBarFill').style.width = s.progreso+'%';
+    $('dValor').textContent = fmtCOP(n.valor);
+    $('dTotal').textContent = fmtCOP(s.total);
+    $('dAbonado').textContent = fmtCOP(s.abonado);
+
+    if(s.interesMonto>0){
+      $('dInteresRow').style.display='flex';
+      $('dInteres').textContent = fmtCOP(s.interesMonto) + ` (${Math.round(s.interesPercent)}%)`;
+    } else {
+      $('dInteresRow').style.display='none';
+    }
+    renderInterestSection(n, s);
+
+    const list = $('abonoList');
+    list.innerHTML = '';
+    if(n.abonos.length===0){
+      list.innerHTML = `<div style="font-size:12.5px; color:var(--ink-dim); text-align:center; padding:10px;">Sin abonos todavía</div>`;
+    } else {
+      [...n.abonos].sort((a,b)=> b.fecha.localeCompare(a.fecha)).forEach((a,idx)=>{
+        const row = document.createElement('div');
+        row.className = 'abono-row';
+        row.innerHTML = `<div><div class="amt mono">${fmtCOP(a.monto)}</div><div class="date">${fmtDate(a.fecha)}</div></div><div class="del" data-id="${a.id}">✕</div>`;
+        row.querySelector('.del').onclick = async ()=>{
+          n.abonos = n.abonos.filter(x=>x.id!==a.id);
+          await saveNegocios();
+          renderDetail();
+        };
+        list.appendChild(row);
+      });
+    }
+  }
+  $('detailBack').onclick = ()=>{ renderList(); showScreen('listScreen'); };
+  function showImageFallback(dataUrl){
+    $('receiptImg').src = dataUrl;
+    $('imageDownloadBtn').href = dataUrl;
+    $('imageDownloadBtn').download = 'prefi-comprobante.png';
+    $('imageModal').classList.remove('hidden');
+  }
+  $('imageModalClose').onclick = ()=> $('imageModal').classList.add('hidden');
+  $('shareImgBtn').onclick = async ()=>{
+    const n = negocios.find(x=>x.id===currentId);
+    showToast('Generando imagen...');
+    const canvas = await renderReceiptCanvas(n);
+    const dataUrl = canvas.toDataURL('image/png');
+
+    // 1) Compartir nativo con archivo de imagen (WhatsApp, Instagram, etc. como al compartir un video)
+    try{
+      const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+      const file = new File([blob], `prefi-${slug(n.nombre)}.png`, {type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({ files:[file], title:'Prefi', text:`Estado del negocio con ${n.nombre}` });
+        return;
+      }
+    }catch(e){
+      if(e && e.name==='AbortError') return; // el usuario canceló, no hacer nada más
+    }
+    // 2) Respaldo: mostrar la imagen para guardar/compartir con gesto nativo (mantener presionado) o descargar
+    showImageFallback(dataUrl);
+  };
+  $('showAbonoForm').onclick = ()=>{ $('abonoForm').classList.toggle('hidden'); };
+  $('addAbonoBtn').onclick = async ()=>{
+    const n = negocios.find(x=>x.id===currentId);
+    const monto = parseFloat($('aMonto').value);
+    const fecha = $('aFecha').value || todayISO();
+    if(!monto || monto<=0){ showToast('Escribe un monto válido'); return; }
+    n.abonos.push({ id:Date.now().toString(), monto, fecha });
+    await saveNegocios();
+    $('abonoForm').classList.add('hidden');
+    renderDetail();
+    showToast('Abono registrado');
+  };
+
+  let deleteArmed = false;
+  $('deleteBtn').onclick = async ()=>{
+    if(!deleteArmed){
+      deleteArmed = true;
+      $('deleteBtn').textContent = '¿Confirmar eliminación?';
+      setTimeout(()=>{ deleteArmed=false; $('deleteBtn').textContent='Eliminar negocio'; }, 3000);
+      return;
+    }
+    negocios = negocios.filter(x=>x.id!==currentId);
+    await saveNegocios();
+    deleteArmed = false;
+    $('deleteBtn').textContent = 'Eliminar negocio';
+    renderList();
+    showScreen('listScreen');
+    showToast('Negocio eliminado');
+  };
+
+  loadNegocios().then(renderList);
+})();
+</script>
+</body>
+</html>
