@@ -412,7 +412,7 @@ body{
   const STORAGE_KEY = 'fiado:negocios';
   const HIST_KEY = 'fiado:historial-oculto';
   let negocios = [];
-  let historialOculto = [];
+  let historialCheckpoints = {};
   let currentId = null;
   const $ = id => document.getElementById(id);
  
@@ -602,15 +602,25 @@ body{
     }catch(e){ console.error('No se pudo cargar', e); }
     try{
       const rawHist = localStorage.getItem(HIST_KEY);
-      if(rawHist) historialOculto = JSON.parse(rawHist);
+      if(rawHist){
+        const parsed = JSON.parse(rawHist);
+        if(Array.isArray(parsed)){
+          // formato antiguo (lista de meses ocultos) -> migrar a checkpoints con los totales actuales
+          const raw = computeRawMonthTotals();
+          historialCheckpoints = {};
+          parsed.forEach(key=>{ if(raw[key]) historialCheckpoints[key] = raw[key]; });
+        } else {
+          historialCheckpoints = parsed || {};
+        }
+      }
     }catch(e){ console.error('No se pudo cargar', e); }
   }
   async function saveNegocios(){
     try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(negocios)); }
     catch(e){ console.error('No se pudo guardar', e); }
   }
-  async function saveHistorialOculto(){
-    try{ localStorage.setItem(HIST_KEY, JSON.stringify(historialOculto)); }
+  async function saveHistorialCheckpoints(){
+    try{ localStorage.setItem(HIST_KEY, JSON.stringify(historialCheckpoints)); }
     catch(e){ console.error('No se pudo guardar', e); }
   }
   function showToast(text){
@@ -731,7 +741,7 @@ body{
     const s = d.toLocaleDateString('es-CO', {month:'long', year:'numeric'});
     return s.charAt(0).toUpperCase()+s.slice(1);
   }
-  function computeMonthlyHistory(){
+  function computeRawMonthTotals(){
     const map = {};
     negocios.forEach(n=>{
       (n.abonos||[]).forEach(a=>{
@@ -741,10 +751,19 @@ body{
         map[key].count += 1;
       });
     });
-    return Object.keys(map)
-      .filter(key => !historialOculto.includes(key))
-      .sort((a,b)=> b.localeCompare(a))
-      .map(key => ({ key, total: map[key].total, count: map[key].count }));
+    return map;
+  }
+  function computeMonthlyHistory(){
+    const raw = computeRawMonthTotals();
+    return Object.keys(raw)
+      .map(key=>{
+        const cp = historialCheckpoints[key];
+        const total = cp ? raw[key].total - cp.total : raw[key].total;
+        const count = cp ? raw[key].count - cp.count : raw[key].count;
+        return { key, total: Math.max(0, total), count: Math.max(0, count) };
+      })
+      .filter(x => x.total>0 || x.count>0)
+      .sort((a,b)=> b.key.localeCompare(a.key));
   }
   function renderHistory(){
     const list = $('historyList');
@@ -775,8 +794,10 @@ body{
   $('historyList').addEventListener('click', async (e)=>{
     const btn = e.target.closest('.month-row-x');
     if(!btn) return;
-    historialOculto.push(btn.dataset.month);
-    await saveHistorialOculto();
+    const key = btn.dataset.month;
+    const raw = computeRawMonthTotals();
+    historialCheckpoints[key] = raw[key] || { total:0, count:0 };
+    await saveHistorialCheckpoints();
     renderHistory();
     showToast('Mes quitado del historial');
   });
