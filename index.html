@@ -410,9 +410,9 @@ body{
 <script>
 (function(){
   const STORAGE_KEY = 'fiado:negocios';
-  const HIST_KEY = 'fiado:historial-oculto';
+  const HIST_KEY = 'fiado:historial-vistos-v2';
   let negocios = [];
-  let historialCheckpoints = {};
+  let historialVistos = {};
   let currentId = null;
   const $ = id => document.getElementById(id);
  
@@ -602,25 +602,15 @@ body{
     }catch(e){ console.error('No se pudo cargar', e); }
     try{
       const rawHist = localStorage.getItem(HIST_KEY);
-      if(rawHist){
-        const parsed = JSON.parse(rawHist);
-        if(Array.isArray(parsed)){
-          // formato antiguo (lista de meses ocultos) -> migrar a checkpoints con los totales actuales
-          const raw = computeRawMonthTotals();
-          historialCheckpoints = {};
-          parsed.forEach(key=>{ if(raw[key]) historialCheckpoints[key] = raw[key]; });
-        } else {
-          historialCheckpoints = parsed || {};
-        }
-      }
+      if(rawHist) historialVistos = JSON.parse(rawHist) || {};
     }catch(e){ console.error('No se pudo cargar', e); }
   }
   async function saveNegocios(){
     try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(negocios)); }
     catch(e){ console.error('No se pudo guardar', e); }
   }
-  async function saveHistorialCheckpoints(){
-    try{ localStorage.setItem(HIST_KEY, JSON.stringify(historialCheckpoints)); }
+  async function saveHistorialVistos(){
+    try{ localStorage.setItem(HIST_KEY, JSON.stringify(historialVistos)); }
     catch(e){ console.error('No se pudo guardar', e); }
   }
   function showToast(text){
@@ -741,28 +731,30 @@ body{
     const s = d.toLocaleDateString('es-CO', {month:'long', year:'numeric'});
     return s.charAt(0).toUpperCase()+s.slice(1);
   }
-  function computeRawMonthTotals(){
+  function groupAbonosByMonth(){
     const map = {};
     negocios.forEach(n=>{
       (n.abonos||[]).forEach(a=>{
         const key = a.fecha.slice(0,7);
-        if(!map[key]) map[key] = { total:0, count:0 };
-        map[key].total += a.monto;
-        map[key].count += 1;
+        if(!map[key]) map[key] = [];
+        map[key].push({ id:a.id, monto:a.monto });
       });
     });
     return map;
   }
   function computeMonthlyHistory(){
-    const raw = computeRawMonthTotals();
-    return Object.keys(raw)
+    const grouped = groupAbonosByMonth();
+    return Object.keys(grouped)
       .map(key=>{
-        const cp = historialCheckpoints[key];
-        const total = cp ? raw[key].total - cp.total : raw[key].total;
-        const count = cp ? raw[key].count - cp.count : raw[key].count;
-        return { key, total: Math.max(0, total), count: Math.max(0, count) };
+        const vistos = new Set(historialVistos[key]||[]);
+        const nuevos = grouped[key].filter(a=> !vistos.has(a.id));
+        return {
+          key,
+          total: nuevos.reduce((s,a)=>s+a.monto, 0),
+          count: nuevos.length
+        };
       })
-      .filter(x => x.total>0 || x.count>0)
+      .filter(x => x.count>0)
       .sort((a,b)=> b.key.localeCompare(a.key));
   }
   function renderHistory(){
@@ -795,9 +787,11 @@ body{
     const btn = e.target.closest('.month-row-x');
     if(!btn) return;
     const key = btn.dataset.month;
-    const raw = computeRawMonthTotals();
-    historialCheckpoints[key] = raw[key] || { total:0, count:0 };
-    await saveHistorialCheckpoints();
+    const grouped = groupAbonosByMonth();
+    const vistos = new Set(historialVistos[key]||[]);
+    (grouped[key]||[]).forEach(a=> vistos.add(a.id));
+    historialVistos[key] = Array.from(vistos);
+    await saveHistorialVistos();
     renderHistory();
     showToast('Mes quitado del historial');
   });
