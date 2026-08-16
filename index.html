@@ -563,7 +563,7 @@ body{
         ctx.font='400 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
         ctx.fillText(`Faltan ${faltan} ${faltan===1?'día':'días'} · empieza a subir el ${fmtDate(addDays(n.fecha, gracia))}`, pad, y);
  
-      } else if(s.interesMonto>0){
+      } else {
         // Fase activa: barra de interés acumulado, igual a la del detalle
         y += 66;
         ctx.font='600 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
