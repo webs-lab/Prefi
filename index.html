@@ -11,7 +11,7 @@
 <title>Prefi</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap');
-
+ 
 :root{
   --bg:#FFFFFF;
   --surface:#FFFFFF;
@@ -48,7 +48,7 @@ body{
 .display{ font-family:'Space Grotesk',sans-serif; }
 .mono{ font-family:'JetBrains Mono',monospace; }
 ::placeholder{ color:var(--ink-dim); opacity:.7; }
-
+ 
 /* ---------- top bar ---------- */
 .topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
 .topbar h1{ font-size:24px; font-weight:700; margin:0; }
@@ -59,17 +59,39 @@ body{
   border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
   font-size:18px; cursor:pointer; color:var(--ink);
 }
-
+ 
 /* ---------- list ---------- */
 .list-screen{ flex:1; display:flex; flex-direction:column; overflow:hidden; position:relative; }
 .list-subtitle{ font-size:13px; color:var(--ink-dim); margin:-10px 0 4px; }
+ 
+.summary-card{
+  background:linear-gradient(135deg, #16A34A 0%, #064E3B 100%);
+  border-radius:20px; padding:20px 20px 18px; margin-bottom:14px;
+  box-shadow:0 10px 22px rgba(6,78,59,.22);
+}
+.summary-label{ font-size:11.5px; font-weight:700; letter-spacing:.06em; color:rgba(255,255,255,.75); margin-bottom:6px; }
+.summary-amount{ font-size:32px; font-weight:700; color:#FFFFFF; margin-bottom:14px; letter-spacing:-.01em; }
+.summary-pills{ display:flex; gap:8px; flex-wrap:wrap; }
+.summary-pill{
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(255,255,255,.16); color:#FFFFFF;
+  font-size:12.5px; font-weight:600; padding:8px 14px; border-radius:999px;
+}
+.tabs{ display:flex; gap:4px; background:var(--surface2); border-radius:14px; padding:4px; margin-bottom:14px; }
+.tab-btn{
+  flex:1; border:none; background:transparent; color:var(--ink-dim);
+  font-family:'Inter',sans-serif; font-size:13.5px; font-weight:700;
+  padding:10px 0; border-radius:11px; cursor:pointer;
+}
+.tab-btn.active{ background:#FFFFFF; color:var(--ink); box-shadow:0 1px 4px rgba(20,32,26,.12); }
+.empty-filter{ text-align:center; color:var(--ink-dim); font-size:14px; padding:40px 10px; }
 .list-wrap{ flex:1; display:flex; flex-direction:column; gap:12px; overflow-y:auto; padding-bottom:10px; }
 .welcome{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:6px; padding:0 8px; }
 .welcome-greet{ font-size:15px; color:var(--ink-dim); font-weight:500; }
 .welcome-logo{ font-size:42px; font-weight:700; letter-spacing:-.02em; margin-bottom:10px; }
 .welcome-logo .accent{ color:var(--green); }
 .welcome p{ font-size:14px; color:var(--ink-dim); line-height:1.5; max-width:280px; margin:0; }
-
+ 
 /* ---------- fondo vivo de bienvenida ---------- */
 .welcome-bg{
   margin:-20px -18px -26px -18px; padding:20px 18px 26px 18px;
@@ -99,14 +121,15 @@ body{
   .welcome-bg::before, .welcome-bg::after{ animation:none; }
   .welcome-bg .welcome-greet, .welcome-bg .welcome-logo, .welcome-bg .welcome p{ animation:none; }
 }
-
+ 
 .ncard{
   position:relative; background:var(--surface); border-radius:16px; padding:14px 16px 12px;
   border:1px solid var(--line); cursor:pointer; box-shadow:var(--shadow);
   background-image:repeating-linear-gradient(var(--rule) 0 1px, transparent 1px 30px);
 }
 .ncard-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
-.ncard-name{ font-weight:700; font-size:16px; }
+.ncard-name{ font-weight:700; font-size:16px; display:flex; align-items:center; gap:7px; }
+.ncard-dot{ width:8px; height:8px; border-radius:50%; flex:none; }
 .ncard-date{ font-size:11.5px; color:var(--ink-dim); }
 .pbar{ height:9px; border-radius:6px; background:var(--surface2); overflow:hidden; }
 .pbar-fill{ height:100%; background:linear-gradient(90deg, var(--green-dim), var(--green)); border-radius:6px; transition:width .3s ease; }
@@ -118,7 +141,7 @@ body{
   position:absolute; top:12px; right:14px; font-size:10px; font-weight:700; color:var(--green);
   border:1px solid var(--green); border-radius:8px; padding:2px 7px; transform:rotate(-6deg);
 }
-
+ 
 .fab{
   align-self:center; margin-top:12px;
   background:var(--green); color:var(--btn-ink); border:none; font-weight:700; font-size:15px;
@@ -131,7 +154,7 @@ body{
   padding:16px 34px; box-shadow:0 10px 28px rgba(0,0,0,.28);
   animation:fadeUp .6s .24s ease both;
 }
-
+ 
 /* ---------- form ---------- */
 .form-screen{ flex:1; display:flex; flex-direction:column; overflow-y:auto; gap:14px; padding-bottom:10px; }
 .field{ display:flex; flex-direction:column; gap:6px; }
@@ -148,7 +171,7 @@ body{
 .switch.on .knob{ left:20px; }
 .sub-fields{ display:flex; flex-direction:column; gap:12px; padding-left:2px; }
 .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-
+ 
 /* ---------- detail ---------- */
 .detail-screen{ flex:1; display:flex; flex-direction:column; overflow-y:auto; gap:16px; padding-bottom:10px; }
 .detail-head{ text-align:center; }
@@ -172,14 +195,14 @@ body{
 .interest-label .val{ color:var(--amber); font-weight:700; }
 .pbar-fill.amber{ background:linear-gradient(90deg, #FDE68A, var(--amber)); }
 .interest-sub{ font-size:11.5px; color:var(--ink-dim); line-height:1.4; }
-
+ 
 .abono-form{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow); }
 .abono-list{ display:flex; flex-direction:column; gap:8px; }
 .abono-row{ display:flex; justify-content:space-between; align-items:center; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:10px 14px; box-shadow:var(--shadow); }
 .abono-row .amt{ font-family:'JetBrains Mono',monospace; font-weight:600; }
 .abono-row .date{ font-size:11.5px; color:var(--ink-dim); }
 .abono-row .del{ color:var(--red); font-size:16px; cursor:pointer; padding:2px 6px; }
-
+ 
 .btn{
   font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15.5px;
   color:var(--btn-ink); background:var(--green); border:none; padding:14px; border-radius:14px; cursor:pointer;
@@ -187,7 +210,7 @@ body{
 .btn:active{ transform:scale(.98); }
 .btn.ghost{ background:transparent; color:var(--ink); border:1px solid var(--line); }
 .btn.danger{ background:transparent; color:var(--red); border:1px solid color-mix(in srgb, var(--red) 40%, transparent); }
-
+ 
 .toast{
   position:absolute; top:60px; left:50%; transform:translateX(-50%) translateY(-8px);
   background:var(--surface); border:1.5px solid var(--green); color:var(--green);
@@ -195,7 +218,7 @@ body{
   padding:8px 16px; border-radius:12px; opacity:0; pointer-events:none; transition:all .25s ease; z-index:20;
 }
 .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
-
+ 
 .modal-overlay{ position:fixed; inset:0; background:rgba(20,32,26,.45); display:flex; align-items:center; justify-content:center; z-index:50; padding:24px; }
 .modal-card{ background:var(--surface); border-radius:18px; padding:20px; width:100%; max-width:360px; display:flex; flex-direction:column; gap:12px; box-shadow:0 12px 32px rgba(20,32,26,.28); }
 .modal-card h3{ margin:0; font-size:16px; font-family:'Space Grotesk',sans-serif; }
@@ -203,35 +226,47 @@ body{
 .modal-card input{ background:var(--surface2); border:1px solid var(--line); border-radius:10px; padding:11px 12px; font-size:12px; font-family:'JetBrains Mono',monospace; color:var(--ink); width:100%; }
 .modal-actions{ display:flex; gap:10px; }
 .modal-actions .btn{ flex:1; padding:12px; font-size:14px; }
-
+ 
 @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
 </style>
 </head>
 <body>
 <div class="app">
   <div class="toast" id="toast"></div>
-
+ 
   <!-- LIST -->
   <div class="list-screen" id="listScreen">
     <div class="topbar"><h1 class="logo">Pre<span class="accent">fi</span></h1></div>
-    <div class="list-subtitle hidden" id="listSubtitle">Tus negocios</div>
+    <div class="summary-card hidden" id="summaryCard">
+      <div class="summary-label">TOTAL POR COBRAR</div>
+      <div class="summary-amount mono" id="summaryAmount">$0</div>
+      <div class="summary-pills">
+        <div class="summary-pill"><span>💼</span><span id="summaryActivos">0 activos</span></div>
+        <div class="summary-pill"><span>⚠</span><span id="summaryMora">0 en mora</span></div>
+      </div>
+    </div>
+    <div class="tabs hidden" id="listTabs">
+      <button type="button" class="tab-btn active" data-filter="todos">Todos</button>
+      <button type="button" class="tab-btn" data-filter="activos">Activos</button>
+      <button type="button" class="tab-btn" data-filter="pagados">Pagados</button>
+    </div>
     <div class="list-wrap" id="listWrap"></div>
     <button class="fab" id="newBtn">+ Nuevo negocio</button>
   </div>
-
+ 
   <!-- FORM -->
   <div class="form-screen hidden" id="formScreen">
     <div class="topbar"><div class="icon-btn" id="formBack">←</div><h1 class="display" style="font-size:19px;">Nuevo negocio</h1><div style="width:38px;"></div></div>
-
+ 
     <div class="field"><label>Nombre de la persona</label><input type="text" id="fName"></div>
     <div class="field"><label>Valor del negocio (COP)</label><input type="number" id="fValor"></div>
     <div class="field"><label>Fecha del negocio</label><input type="date" id="fFecha"></div>
-
+ 
     <div class="toggle-row">
       <span style="font-size:14px; font-weight:600;">Cobrar interés por mora</span>
       <div class="switch" id="interesSwitch"><div class="knob"></div></div>
     </div>
-
+ 
     <div class="sub-fields hidden" id="interesFields">
       <div class="field"><label>Días antes de que empiece a subir el interés</label><input type="number" id="fGracia" placeholder="Ej: 20"></div>
       <div class="grid2">
@@ -246,11 +281,11 @@ body{
       </div>
       <div style="font-size:11.5px; color:var(--ink-dim);">El interés se acumula hasta un máximo del 100% del valor del negocio.</div>
     </div>
-
+ 
     <div style="flex:1;"></div>
     <button class="btn" id="saveBtn">Guardar negocio</button>
   </div>
-
+ 
   <!-- DETAIL -->
   <div class="detail-screen hidden" id="detailScreen">
     <div class="topbar"><div class="icon-btn" id="detailBack">←</div><div style="width:38px;"></div><div style="width:38px;"></div></div>
@@ -261,33 +296,33 @@ body{
     <div class="saldo-num mono" id="dSaldo"></div>
     <div class="saldo-lbl">Saldo pendiente</div>
     <div class="pbar big"><div class="pbar-fill" id="dBarFill"></div></div>
-
+ 
     <div id="interestBox"></div>
-
+ 
     <div class="breakdown">
       <div class="brow"><span class="lbl">Valor original</span><span class="val mono" id="dValor"></span></div>
       <div class="brow amber" id="dInteresRow"><span class="lbl">Interés acumulado</span><span class="val mono" id="dInteres"></span></div>
       <div class="brow"><span class="lbl">Total a pagar</span><span class="val mono" id="dTotal"></span></div>
       <div class="brow"><span class="lbl">Abonado</span><span class="val mono" id="dAbonado"></span></div>
     </div>
-
+ 
     <button class="btn" id="showAbonoForm">Registrar abono</button>
     <div class="abono-form hidden" id="abonoForm">
       <div class="field"><label>Monto abonado (COP)</label><input type="number" id="aMonto" placeholder="Ej: 40000"></div>
       <div class="field"><label>Fecha</label><input type="date" id="aFecha"></div>
       <button class="btn" id="addAbonoBtn">Agregar abono</button>
     </div>
-
+ 
     <button class="btn ghost" id="shareImgBtn">📤 Compartir estado con <span id="shareName"></span></button>
-
+ 
     <div>
       <div style="font-size:12.5px; color:var(--ink-dim); font-weight:600; margin-bottom:8px;">Historial de abonos</div>
       <div class="abono-list" id="abonoList"></div>
     </div>
-
+ 
     <button class="btn danger" id="deleteBtn">Eliminar negocio</button>
   </div>
-
+ 
   <!-- Imagen del comprobante generada + respaldo para guardar/compartir -->
   <div class="modal-overlay hidden" id="imageModal">
     <div class="modal-card">
@@ -301,15 +336,21 @@ body{
     </div>
   </div>
 </div>
-
+ 
 <script>
 (function(){
   const STORAGE_KEY = 'fiado:negocios';
   let negocios = [];
   let currentId = null;
   const $ = id => document.getElementById(id);
-
-  function todayISO(){ return new Date().toISOString().slice(0,10); }
+ 
+  function todayISO(){
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
   function fmtCOP(n){ return '$' + Math.round(n).toLocaleString('es-CO'); }
   function fmtDate(iso){
     const d = new Date(iso+'T00:00:00');
@@ -351,21 +392,21 @@ body{
     canvas.width=W; canvas.height=H;
     const ctx = canvas.getContext('2d');
     ctx.fillStyle='#FFFFFF'; ctx.fillRect(0,0,W,H);
-
+ 
     let y = 120;
     ctx.font='700 56px "Space Grotesk"'; ctx.textAlign='left';
     ctx.fillStyle='#14201A'; ctx.fillText('Pre', pad, y);
     const preW = ctx.measureText('Pre').width;
     ctx.fillStyle='#16A34A'; ctx.fillText('fi', pad+preW, y);
-
+ 
     y += 60;
     ctx.strokeStyle='#E5E9E1'; ctx.lineWidth=2;
     ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(W-pad,y); ctx.stroke();
-
+ 
     y += 80;
     ctx.font='500 30px "Inter"'; ctx.fillStyle='#6E7D72';
     ctx.fillText('Negocio con', pad, y);
-
+ 
     y += 66;
     let nameSize = 62;
     ctx.font = `700 ${nameSize}px "Space Grotesk"`;
@@ -373,15 +414,15 @@ body{
       nameSize -= 4; ctx.font = `700 ${nameSize}px "Space Grotesk"`;
     }
     ctx.fillStyle='#14201A'; ctx.fillText(n.nombre, pad, y);
-
+ 
     y += 44;
     ctx.font='400 28px "Inter"'; ctx.fillStyle='#6E7D72';
     ctx.fillText('Desde el ' + fmtDate(n.fecha), pad, y);
-
+ 
     y += 90;
     ctx.font='600 24px "Inter"'; ctx.fillStyle='#6E7D72';
     ctx.fillText('SALDO PENDIENTE', pad, y);
-
+ 
     y += 96;
     let saldoSize = 96;
     const saldoTxt = fmtCOP(s.saldo);
@@ -390,7 +431,7 @@ body{
       saldoSize -= 4; ctx.font = `700 ${saldoSize}px "JetBrains Mono"`;
     }
     ctx.fillStyle='#14201A'; ctx.fillText(saldoTxt, pad, y);
-
+ 
     y += 60;
     const barW = W-pad*2, barH = 26;
     roundRectPath(ctx, pad, y, barW, barH, 13);
@@ -398,16 +439,16 @@ body{
     const fillW = Math.max(barH, barW*(s.progreso/100));
     roundRectPath(ctx, pad, y, fillW, barH, 13);
     ctx.fillStyle='#16A34A'; ctx.fill();
-
+ 
     y += 56;
     ctx.font='600 28px "JetBrains Mono"'; ctx.fillStyle='#16A34A'; ctx.textAlign='right';
     ctx.fillText(Math.round(s.progreso)+'% pagado', W-pad, y);
     ctx.textAlign='left';
-
+ 
     y += 70;
     ctx.strokeStyle='#E5E9E1';
     ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(W-pad,y); ctx.stroke();
-
+ 
     function row(label, value, color){
       y += 74;
       ctx.font='500 30px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
@@ -421,35 +462,35 @@ body{
     if(s.interesMonto>0) row('Interés acumulado', fmtCOP(s.interesMonto)+' ('+Math.round(s.interesPercent)+'%)', '#B45309');
     row('Total a pagar', fmtCOP(s.total));
     row('Abonado', fmtCOP(s.abonado), '#16A34A');
-
+ 
     if(n.interes && n.interes.activo){
-      const diasT = daysBetween(n.fecha);
+      const diasT = Math.max(0, daysBetween(n.fecha));
       const gracia = n.interes.gracia;
       const barW2 = W-pad*2, barH2 = 26;
-
+ 
       if(diasT < gracia){
         // Fase de gracia: barra de cuenta regresiva antes de que empiece el interés
         const pct = Math.min(100, (diasT/Math.max(1,gracia))*100);
         const faltan = gracia - diasT;
-
+ 
         y += 66;
         ctx.font='600 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
         ctx.fillText('DÍAS PARA QUE EMPIECE EL INTERÉS', pad, y);
         ctx.font='700 30px "JetBrains Mono"'; ctx.fillStyle='#B45309'; ctx.textAlign='right';
         ctx.fillText(Math.round(pct)+'%', W-pad, y);
         ctx.textAlign='left';
-
+ 
         y += 34;
         roundRectPath(ctx, pad, y, barW2, barH2, 13);
         ctx.fillStyle='#FEF3C7'; ctx.fill();
         const fillW2 = Math.max(barH2, barW2*(pct/100));
         roundRectPath(ctx, pad, y, fillW2, barH2, 13);
         ctx.fillStyle='#B45309'; ctx.fill();
-
+ 
         y += 52;
         ctx.font='400 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
         ctx.fillText(`Faltan ${faltan} ${faltan===1?'día':'días'} · empieza a subir el ${fmtDate(addDays(n.fecha, gracia))}`, pad, y);
-
+ 
       } else if(s.interesMonto>0){
         // Fase activa: barra de interés acumulado, igual a la del detalle
         y += 66;
@@ -458,30 +499,30 @@ body{
         ctx.font='700 30px "JetBrains Mono"'; ctx.fillStyle='#B45309'; ctx.textAlign='right';
         ctx.fillText(Math.round(s.interesPercent)+'%', W-pad, y);
         ctx.textAlign='left';
-
+ 
         y += 34;
         roundRectPath(ctx, pad, y, barW2, barH2, 13);
         ctx.fillStyle='#FEF3C7'; ctx.fill();
         const fillW2 = Math.max(barH2, barW2*(s.interesPercent/100));
         roundRectPath(ctx, pad, y, fillW2, barH2, 13);
         ctx.fillStyle='#B45309'; ctx.fill();
-
+ 
         y += 52;
         ctx.font='400 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
         ctx.fillText(`${s.diasMora} ${s.diasMora===1?'día':'días'} de mora · sube ${n.interes.porcentaje}% cada ${n.interes.frecuencia===1?'día':n.interes.frecuencia+' días'} (tope 100%)`, pad, y);
       }
     }
-
+ 
     ctx.font='400 24px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
     ctx.fillText('Generado el ' + fmtDate(todayISO()), pad, H-70);
     ctx.font='700 26px "Space Grotesk"'; ctx.fillStyle='#16A34A'; ctx.textAlign='right';
     ctx.fillText('Prefi', W-pad, H-70);
     ctx.textAlign='left';
-
+ 
     return canvas;
   }
   function slug(str){ return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-'); }
-
+ 
   async function loadNegocios(){
     try{
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -497,13 +538,13 @@ body{
     t.textContent = text; t.classList.add('show');
     clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 1500);
   }
-
+ 
   function showScreen(id){
     ['listScreen','formScreen','detailScreen'].forEach(s=>{
       $(s).classList.toggle('hidden', s!==id);
     });
   }
-
+ 
   /* ---------------- CALC ---------------- */
   function computeStats(n){
     const abonado = n.abonos.reduce((s,a)=>s+a.monto, 0);
@@ -520,15 +561,19 @@ body{
     const progreso = total>0 ? Math.min(100, (abonado/total)*100) : 0;
     return { abonado, interesPercent, interesMonto, total, saldo, progreso, diasMora };
   }
-
+ 
   /* ---------------- LIST ---------------- */
+  let listFilter = 'todos';
+ 
   function renderList(){
     const wrap = $('listWrap');
-    const subtitle = $('listSubtitle');
+    const summaryCard = $('summaryCard');
+    const tabs = $('listTabs');
     if(negocios.length===0){
       $('listScreen').classList.add('welcome-bg');
       $('newBtn').textContent = 'Comenzar nuevo negocio';
-      subtitle.classList.add('hidden');
+      summaryCard.classList.add('hidden');
+      tabs.classList.add('hidden');
       wrap.className = 'welcome';
       wrap.innerHTML = `
         <div class="welcome-greet">Bienvenido a</div>
@@ -539,18 +584,43 @@ body{
     }
     $('listScreen').classList.remove('welcome-bg');
     $('newBtn').textContent = '+ Nuevo negocio';
-    subtitle.classList.remove('hidden');
+    summaryCard.classList.remove('hidden');
+    tabs.classList.remove('hidden');
     wrap.className = 'list-wrap';
     wrap.innerHTML = '';
+ 
+    const withStats = negocios.map(n=> ({ n, s: computeStats(n) }));
+ 
+    const totalPorCobrar = withStats.reduce((sum, x)=> sum + x.s.saldo, 0);
+    const countActivos = withStats.filter(x=> x.s.saldo>0).length;
+    const countMora = withStats.filter(x=> x.s.interesMonto>0).length;
+ 
+    $('summaryAmount').textContent = fmtCOP(totalPorCobrar);
+    $('summaryActivos').textContent = `${countActivos} activos`;
+    $('summaryMora').textContent = `${countMora} en mora`;
+ 
+    tabs.querySelectorAll('.tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.filter===listFilter));
+ 
+    const filtered = withStats.filter(x=>{
+      if(listFilter==='activos') return x.s.saldo>0;
+      if(listFilter==='pagados') return x.s.saldo<=0;
+      return true;
+    });
+ 
+    if(filtered.length===0){
+      wrap.innerHTML = `<div class="empty-filter">No tienes negocios en esta categoría.</div>`;
+      return;
+    }
+ 
     // most recent first
-    [...negocios].sort((a,b)=> b.fecha.localeCompare(a.fecha)).forEach(n=>{
-      const s = computeStats(n);
+    filtered.sort((a,b)=> b.n.fecha.localeCompare(a.n.fecha)).forEach(({n,s})=>{
+      const dotColor = s.saldo<=0 ? 'var(--ink-dim)' : (s.interesMonto>0 ? 'var(--amber)' : 'var(--green)');
       const card = document.createElement('div');
       card.className = 'ncard';
       card.innerHTML = `
         ${s.saldo<=0 ? '<div class="paid-badge">PAGADO</div>' : ''}
         <div class="ncard-top">
-          <div class="ncard-name">${n.nombre}</div>
+          <div class="ncard-name"><span class="ncard-dot" style="background:${dotColor};"></span>${n.nombre}</div>
           <div class="ncard-date">${fmtDate(n.fecha)}</div>
         </div>
         <div class="pbar"><div class="pbar-fill" style="width:${s.progreso}%;"></div></div>
@@ -564,7 +634,14 @@ body{
       wrap.appendChild(card);
     });
   }
-
+ 
+  $('listTabs').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.tab-btn');
+    if(!btn) return;
+    listFilter = btn.dataset.filter;
+    renderList();
+  });
+ 
   /* ---------------- FORM ---------------- */
   let interesActivo = false;
   $('newBtn').onclick = ()=>{
@@ -604,7 +681,7 @@ body{
     showScreen('listScreen');
     showToast('Negocio guardado');
   };
-
+ 
   /* ---------------- DETAIL ---------------- */
   function openDetail(id){
     currentId = id;
@@ -639,10 +716,10 @@ body{
   function renderInterestSection(n, s){
     const box = $('interestBox');
     if(!n.interes || !n.interes.activo){ box.innerHTML=''; return; }
-
-    const diasT = daysBetween(n.fecha);
+ 
+    const diasT = Math.max(0, daysBetween(n.fecha));
     const gracia = n.interes.gracia;
-
+ 
     if(diasT < gracia){
       // Fase 1: cuenta regresiva antes de que empiece el interés
       const pct = Math.min(100, (diasT/Math.max(1,gracia))*100);
@@ -676,7 +753,7 @@ body{
     $('dValor').textContent = fmtCOP(n.valor);
     $('dTotal').textContent = fmtCOP(s.total);
     $('dAbonado').textContent = fmtCOP(s.abonado);
-
+ 
     if(s.interesMonto>0){
       $('dInteresRow').style.display='flex';
       $('dInteres').textContent = fmtCOP(s.interesMonto) + ` (${Math.round(s.interesPercent)}%)`;
@@ -684,7 +761,7 @@ body{
       $('dInteresRow').style.display='none';
     }
     renderInterestSection(n, s);
-
+ 
     const list = $('abonoList');
     list.innerHTML = '';
     if(n.abonos.length===0){
@@ -716,7 +793,7 @@ body{
     showToast('Generando imagen...');
     const canvas = await renderReceiptCanvas(n);
     const dataUrl = canvas.toDataURL('image/png');
-
+ 
     // 1) Compartir nativo con archivo de imagen (WhatsApp, Instagram, etc. como al compartir un video)
     try{
       const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
@@ -743,7 +820,7 @@ body{
     renderDetail();
     showToast('Abono registrado');
   };
-
+ 
   let deleteArmed = false;
   $('deleteBtn').onclick = async ()=>{
     if(!deleteArmed){
@@ -760,9 +837,10 @@ body{
     showScreen('listScreen');
     showToast('Negocio eliminado');
   };
-
+ 
   loadNegocios().then(renderList);
 })();
 </script>
 </body>
 </html>
+ 
