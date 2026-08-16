@@ -180,6 +180,28 @@ body{
 .detail-head .date{ font-size:12.5px; color:var(--ink-dim); margin-top:2px; }
 .saldo-num{ text-align:center; font-size:38px; font-weight:700; margin:4px 0; }
 .saldo-lbl{ text-align:center; font-size:12px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:.06em; margin-top:-14px; }
+ 
+.edit-valor-btn{
+  display:flex; align-items:center; justify-content:center; gap:5px;
+  width:100%; background:none; border:1.5px solid var(--green); border-radius:12px;
+  padding:9px 0; margin:10px 0 4px;
+  font-family:'Inter',sans-serif; font-size:12.5px; font-weight:700;
+  color:var(--green); cursor:pointer;
+}
+.edit-valor-icon{ width:13px; height:13px; flex:none; }
+.edit-valor-form{ display:flex; gap:8px; margin:10px 0 4px; }
+.edit-valor-form input{
+  flex:1; min-width:0; background:var(--surface2); border:1px solid var(--line); border-radius:12px;
+  padding:10px 12px; font-size:16px; font-family:'Inter',sans-serif; color:var(--ink);
+  outline:none;
+}
+.edit-valor-form input:focus{
+  border-color:var(--green); box-shadow:0 0 0 3px rgba(22,163,74,.15);
+}
+.edit-valor-form button{
+  background:var(--green); color:var(--btn-ink); border:none; border-radius:12px;
+  padding:0 18px; font-weight:700; font-size:13.5px; cursor:pointer; flex:none;
+}
 .pbar.big{ height:14px; }
 .breakdown{
   background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px 16px;
@@ -302,6 +324,14 @@ body{
     </div>
     <div class="saldo-num mono" id="dSaldo"></div>
     <div class="saldo-lbl">Saldo pendiente</div>
+    <button type="button" class="edit-valor-btn" id="editValorBtn">
+      <svg class="edit-valor-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+      Editar monto
+    </button>
+    <div class="edit-valor-form hidden" id="editValorForm">
+      <input type="number" id="editValorInput" placeholder="Nuevo valor del negocio">
+      <button type="button" id="editValorSave">Guardar</button>
+    </div>
     <div class="pbar big"><div class="pbar-fill" id="dBarFill"></div></div>
  
     <div id="interestBox"></div>
@@ -695,6 +725,8 @@ body{
     $('abonoForm').classList.add('hidden');
     $('aFecha').value = todayISO();
     $('aMonto').value = '';
+    $('editValorForm').classList.add('hidden');
+    $('editValorBtn').classList.remove('hidden');
     renderDetail();
     showScreen('detailScreen');
   }
@@ -788,6 +820,27 @@ body{
     }
   }
   $('detailBack').onclick = ()=>{ renderList(); showScreen('listScreen'); };
+ 
+  $('editValorBtn').onclick = ()=>{
+    const n = negocios.find(x=>x.id===currentId);
+    if(!n) return;
+    $('editValorInput').value = n.valor;
+    $('editValorForm').classList.remove('hidden');
+    $('editValorBtn').classList.add('hidden');
+    $('editValorInput').focus();
+  };
+  $('editValorSave').onclick = async ()=>{
+    const n = negocios.find(x=>x.id===currentId);
+    if(!n) return;
+    const nuevoValor = parseFloat($('editValorInput').value);
+    if(!nuevoValor || nuevoValor<=0){ showToast('Escribe un monto válido'); return; }
+    n.valor = nuevoValor;
+    await saveNegocios();
+    $('editValorForm').classList.add('hidden');
+    $('editValorBtn').classList.remove('hidden');
+    renderDetail();
+    showToast('Monto actualizado');
+  };
   function showImageFallback(dataUrl){
     $('receiptImg').src = dataUrl;
     $('imageDownloadBtn').href = dataUrl;
@@ -850,4 +903,3 @@ body{
 </script>
 </body>
 </html>
- 
