@@ -86,6 +86,29 @@ body{
 }
 .tab-btn.active{ background:#FFFFFF; color:var(--ink); box-shadow:0 1px 4px rgba(20,32,26,.12); }
 .empty-filter{ text-align:center; color:var(--ink-dim); font-size:14px; padding:40px 10px; }
+ 
+.history-btn{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  width:100%; background:transparent; border:1.5px solid var(--green); color:var(--green);
+  font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px;
+  padding:13px; border-radius:14px; cursor:pointer; margin-bottom:14px;
+}
+.history-btn-icon{ width:16px; height:16px; flex:none; }
+ 
+.month-row{
+  display:flex; align-items:center; gap:10px;
+  background:var(--surface); border:1px solid var(--line); border-radius:16px;
+  padding:14px 12px 14px 16px; box-shadow:var(--shadow);
+}
+.month-row-info{ flex:1; min-width:0; }
+.month-row-label{ font-weight:700; font-size:15px; text-transform:capitalize; }
+.month-row-count{ font-size:11.5px; color:var(--ink-dim); margin-top:2px; }
+.month-row-amount{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px; color:var(--green); flex:none; }
+.month-row-x{
+  flex:none; width:26px; height:26px; border-radius:50%; border:none; background:var(--surface2);
+  color:var(--ink-dim); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;
+}
+.month-row-x svg{ width:12px; height:12px; }
 .list-wrap{ flex:1; display:flex; flex-direction:column; gap:12px; overflow-y:auto; padding-bottom:10px; }
 .welcome{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:6px; padding:0 8px; }
 .welcome-greet{ font-size:15px; color:var(--ink-dim); font-weight:500; }
@@ -260,6 +283,10 @@ body{
   <!-- LIST -->
   <div class="list-screen" id="listScreen">
     <div class="topbar"><h1 class="logo">Pre<span class="accent">fi</span></h1></div>
+    <button type="button" class="history-btn hidden" id="historyBtn">
+      <svg class="history-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      Historial por mes
+    </button>
     <div class="summary-card hidden" id="summaryCard">
       <div class="summary-label">TOTAL POR COBRAR</div>
       <div class="summary-amount mono" id="summaryAmount">$0</div>
@@ -360,6 +387,12 @@ body{
     <button class="btn danger" id="deleteBtn">Eliminar negocio</button>
   </div>
  
+  <!-- HISTORIAL POR MES -->
+  <div class="detail-screen hidden" id="historyScreen">
+    <div class="topbar"><div class="icon-btn" id="historyBack">←</div><h1 class="display" style="font-size:19px;">Historial por mes</h1><div style="width:38px;"></div></div>
+    <div id="historyList"></div>
+  </div>
+ 
   <!-- Imagen del comprobante generada + respaldo para guardar/compartir -->
   <div class="modal-overlay hidden" id="imageModal">
     <div class="modal-card">
@@ -377,7 +410,9 @@ body{
 <script>
 (function(){
   const STORAGE_KEY = 'fiado:negocios';
+  const HIST_KEY = 'fiado:historial-oculto';
   let negocios = [];
+  let historialOculto = [];
   let currentId = null;
   const $ = id => document.getElementById(id);
  
@@ -565,9 +600,17 @@ body{
       const raw = localStorage.getItem(STORAGE_KEY);
       if(raw) negocios = JSON.parse(raw);
     }catch(e){ console.error('No se pudo cargar', e); }
+    try{
+      const rawHist = localStorage.getItem(HIST_KEY);
+      if(rawHist) historialOculto = JSON.parse(rawHist);
+    }catch(e){ console.error('No se pudo cargar', e); }
   }
   async function saveNegocios(){
     try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(negocios)); }
+    catch(e){ console.error('No se pudo guardar', e); }
+  }
+  async function saveHistorialOculto(){
+    try{ localStorage.setItem(HIST_KEY, JSON.stringify(historialOculto)); }
     catch(e){ console.error('No se pudo guardar', e); }
   }
   function showToast(text){
@@ -577,7 +620,7 @@ body{
   }
  
   function showScreen(id){
-    ['listScreen','formScreen','detailScreen'].forEach(s=>{
+    ['listScreen','formScreen','detailScreen','historyScreen'].forEach(s=>{
       $(s).classList.toggle('hidden', s!==id);
     });
   }
@@ -606,11 +649,13 @@ body{
     const wrap = $('listWrap');
     const summaryCard = $('summaryCard');
     const tabs = $('listTabs');
+    const historyBtn = $('historyBtn');
     if(negocios.length===0){
       $('listScreen').classList.add('welcome-bg');
       $('newBtn').textContent = 'Comenzar nuevo negocio';
       summaryCard.classList.add('hidden');
       tabs.classList.add('hidden');
+      historyBtn.classList.add('hidden');
       wrap.className = 'welcome';
       wrap.innerHTML = `
         <div class="welcome-greet">Bienvenido a</div>
@@ -623,6 +668,7 @@ body{
     $('newBtn').textContent = '+ Nuevo negocio';
     summaryCard.classList.remove('hidden');
     tabs.classList.remove('hidden');
+    historyBtn.classList.remove('hidden');
     wrap.className = 'list-wrap';
     wrap.innerHTML = '';
  
@@ -677,6 +723,62 @@ body{
     if(!btn) return;
     listFilter = btn.dataset.filter;
     renderList();
+  });
+ 
+  /* ---------------- HISTORIAL POR MES ---------------- */
+  function monthLabel(key){
+    const d = new Date(key+'-01T00:00:00');
+    const s = d.toLocaleDateString('es-CO', {month:'long', year:'numeric'});
+    return s.charAt(0).toUpperCase()+s.slice(1);
+  }
+  function computeMonthlyHistory(){
+    const map = {};
+    negocios.forEach(n=>{
+      (n.abonos||[]).forEach(a=>{
+        const key = a.fecha.slice(0,7);
+        if(!map[key]) map[key] = { total:0, count:0 };
+        map[key].total += a.monto;
+        map[key].count += 1;
+      });
+    });
+    return Object.keys(map)
+      .filter(key => !historialOculto.includes(key))
+      .sort((a,b)=> b.localeCompare(a))
+      .map(key => ({ key, total: map[key].total, count: map[key].count }));
+  }
+  function renderHistory(){
+    const list = $('historyList');
+    const meses = computeMonthlyHistory();
+    if(meses.length===0){
+      list.innerHTML = `<div class="empty-filter">Todavía no has recibido abonos.</div>`;
+      return;
+    }
+    list.innerHTML = '';
+    meses.forEach(({key,total,count})=>{
+      const row = document.createElement('div');
+      row.className = 'month-row';
+      row.innerHTML = `
+        <div class="month-row-info">
+          <div class="month-row-label">${monthLabel(key)}</div>
+          <div class="month-row-count">${count} abono${count===1?'':'s'}</div>
+        </div>
+        <div class="month-row-amount">${fmtCOP(total)}</div>
+        <button type="button" class="month-row-x" data-month="${key}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      `;
+      list.appendChild(row);
+    });
+  }
+  $('historyBtn').onclick = ()=>{ renderHistory(); showScreen('historyScreen'); };
+  $('historyBack').onclick = ()=> showScreen('listScreen');
+  $('historyList').addEventListener('click', async (e)=>{
+    const btn = e.target.closest('.month-row-x');
+    if(!btn) return;
+    historialOculto.push(btn.dataset.month);
+    await saveHistorialOculto();
+    renderHistory();
+    showToast('Mes quitado del historial');
   });
  
   /* ---------------- FORM ---------------- */
