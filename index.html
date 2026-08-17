@@ -70,6 +70,11 @@ body{
   box-shadow:0 10px 22px rgba(6,78,59,.22);
 }
 .summary-label{ font-size:11.5px; font-weight:700; letter-spacing:.06em; color:rgba(255,255,255,.75); margin-bottom:6px; }
+.summary-top-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+.summary-business-name{
+  font-size:12.5px; font-weight:700; color:rgba(255,255,255,.9); text-align:right;
+  max-width:50%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
 .summary-amount{ font-size:32px; font-weight:700; color:#FFFFFF; margin-bottom:14px; letter-spacing:-.01em; }
 .summary-pills{ display:flex; gap:8px; flex-wrap:wrap; }
 .summary-pill{
@@ -272,6 +277,13 @@ body{
 .modal-card input{ background:var(--surface2); border:1px solid var(--line); border-radius:10px; padding:11px 12px; font-size:12px; font-family:'JetBrains Mono',monospace; color:var(--ink); width:100%; }
 .modal-actions{ display:flex; gap:10px; }
 .modal-actions .btn{ flex:1; padding:12px; font-size:14px; }
+.icon-btn.danger-armed{ border-color:var(--red); color:var(--red); }
+.ncard-delete{
+  flex:none; width:24px; height:24px; border-radius:50%; border:none; background:var(--surface2);
+  color:var(--ink-dim); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;
+}
+.ncard-delete svg{ width:12px; height:12px; }
+.ncard-delete.danger-armed{ background:var(--red); color:#FFFFFF; }
  
 @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
 </style>
@@ -280,15 +292,43 @@ body{
 <div class="app">
   <div class="toast" id="toast"></div>
  
-  <!-- LIST -->
-  <div class="list-screen" id="listScreen">
+  <!-- HOME (lista de negocios) -->
+  <div class="list-screen" id="homeScreen">
     <div class="topbar"><h1 class="logo">Pre<span class="accent">fi</span></h1></div>
+    <div class="summary-card hidden" id="homeSummaryCard">
+      <div class="summary-label">TUS NEGOCIOS</div>
+      <div class="summary-amount mono" id="homeSummaryCount">0</div>
+      <div class="summary-pills">
+        <div class="summary-pill">
+          <svg class="summary-pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <span id="homeSummaryPersonas">0 personas</span>
+        </div>
+        <div class="summary-pill">
+          <svg class="summary-pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          <span id="homeSummaryMora">0 en mora</span>
+        </div>
+      </div>
+    </div>
+    <div class="list-wrap" id="homeWrap"></div>
+    <button class="fab" id="newBusinessBtn">+ Nuevo negocio</button>
+  </div>
+ 
+  <!-- NEGOCIO (lista de personas dentro de un negocio) -->
+  <div class="list-screen hidden" id="listScreen">
+    <div class="topbar">
+      <div class="icon-btn" id="businessBack">←</div>
+      <div style="width:38px;"></div>
+      <div style="width:38px;"></div>
+    </div>
     <button type="button" class="history-btn hidden" id="historyBtn">
       <svg class="history-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
       Historial por mes
     </button>
     <div class="summary-card hidden" id="summaryCard">
-      <div class="summary-label">TOTAL POR COBRAR</div>
+      <div class="summary-top-row">
+        <div class="summary-label">TOTAL POR COBRAR</div>
+        <div class="summary-business-name" id="summaryBusinessName"></div>
+      </div>
       <div class="summary-amount mono" id="summaryAmount">$0</div>
       <div class="summary-pills">
         <div class="summary-pill">
@@ -307,16 +347,25 @@ body{
       <button type="button" class="tab-btn" data-filter="pagados">Pagados</button>
     </div>
     <div class="list-wrap" id="listWrap"></div>
-    <button class="fab" id="newBtn">+ Nuevo negocio</button>
+    <button class="fab" id="newBtn">+ Nueva persona</button>
+  </div>
+ 
+  <!-- NUEVO NEGOCIO -->
+  <div class="form-screen hidden" id="newBusinessScreen">
+    <div class="topbar"><div class="icon-btn" id="newBusinessBack">←</div><h1 class="display" style="font-size:19px;">Nuevo negocio</h1><div style="width:38px;"></div></div>
+    <div class="field"><label>Nombre del negocio</label><input type="text" id="newBusinessInput"></div>
+    <div class="field"><label>Fecha</label><input type="date" id="newBusinessFecha"></div>
+    <div style="flex:1;"></div>
+    <button class="btn" id="newBusinessCreate">Guardar negocio</button>
   </div>
  
   <!-- FORM -->
   <div class="form-screen hidden" id="formScreen">
-    <div class="topbar"><div class="icon-btn" id="formBack">←</div><h1 class="display" style="font-size:19px;">Nuevo negocio</h1><div style="width:38px;"></div></div>
+    <div class="topbar"><div class="icon-btn" id="formBack">←</div><h1 class="display" style="font-size:19px;">Nueva persona</h1><div style="width:38px;"></div></div>
  
     <div class="field"><label>Nombre de la persona</label><input type="text" id="fName"></div>
-    <div class="field"><label>Valor del negocio (COP)</label><input type="number" id="fValor"></div>
-    <div class="field"><label>Fecha del negocio</label><input type="date" id="fFecha"></div>
+    <div class="field"><label>Valor de la deuda (COP)</label><input type="number" id="fValor"></div>
+    <div class="field"><label>Fecha</label><input type="date" id="fFecha"></div>
  
     <div class="toggle-row">
       <span style="font-size:14px; font-weight:600;">Cobrar interés por mora</span>
@@ -335,11 +384,11 @@ body{
           </select>
         </div>
       </div>
-      <div style="font-size:11.5px; color:var(--ink-dim);">El interés se acumula hasta un máximo del 100% del valor del negocio.</div>
+      <div style="font-size:11.5px; color:var(--ink-dim);">El interés se acumula hasta un máximo del 100% del valor de la deuda.</div>
     </div>
  
     <div style="flex:1;"></div>
-    <button class="btn" id="saveBtn">Guardar negocio</button>
+    <button class="btn" id="saveBtn">Guardar persona</button>
   </div>
  
   <!-- DETAIL -->
@@ -384,7 +433,7 @@ body{
       <div class="abono-list" id="abonoList"></div>
     </div>
  
-    <button class="btn danger" id="deleteBtn">Eliminar negocio</button>
+    <button class="btn danger" id="deleteBtn">Eliminar persona</button>
   </div>
  
   <!-- HISTORIAL POR MES -->
@@ -413,8 +462,12 @@ body{
   const HIST_KEY = 'fiado:historial-vistos-v2';
   let negocios = [];
   let historialVistos = {};
+  let currentBusinessId = null;
   let currentId = null;
   const $ = id => document.getElementById(id);
+ 
+  function getBusiness(id){ return negocios.find(x=>x.id===id); }
+  function currentBusiness(){ return getBusiness(currentBusinessId); }
  
   function todayISO(){
     const d = new Date();
@@ -598,7 +651,16 @@ body{
   async function loadNegocios(){
     try{
       const raw = localStorage.getItem(STORAGE_KEY);
-      if(raw) negocios = JSON.parse(raw);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        if(parsed.length>0 && !('personas' in parsed[0])){
+          // formato antiguo: lista plana de personas -> envolver en un negocio
+          negocios = [{ id:'migrado-'+Date.now(), nombre:'Mis negocios', fecha: todayISO(), personas: parsed }];
+          await saveNegocios();
+        } else {
+          negocios = parsed;
+        }
+      }
     }catch(e){ console.error('No se pudo cargar', e); }
     try{
       const rawHist = localStorage.getItem(HIST_KEY);
@@ -620,7 +682,7 @@ body{
   }
  
   function showScreen(id){
-    ['listScreen','formScreen','detailScreen','historyScreen'].forEach(s=>{
+    ['homeScreen','listScreen','formScreen','detailScreen','historyScreen','newBusinessScreen'].forEach(s=>{
       $(s).classList.toggle('hidden', s!==id);
     });
   }
@@ -642,20 +704,15 @@ body{
     return { abonado, interesPercent, interesMonto, total, saldo, progreso, diasMora };
   }
  
-  /* ---------------- LIST ---------------- */
-  let listFilter = 'todos';
- 
-  function renderList(){
-    const wrap = $('listWrap');
-    const summaryCard = $('summaryCard');
-    const tabs = $('listTabs');
-    const historyBtn = $('historyBtn');
+  /* ---------------- HOME (negocios) ---------------- */
+  let deleteArmedIds = new Set();
+  function renderHome(){
+    const wrap = $('homeWrap');
+    const summaryCard = $('homeSummaryCard');
     if(negocios.length===0){
-      $('listScreen').classList.add('welcome-bg');
-      $('newBtn').textContent = 'Comenzar nuevo negocio';
+      $('homeScreen').classList.add('welcome-bg');
+      $('newBusinessBtn').textContent = 'Comenzar';
       summaryCard.classList.add('hidden');
-      tabs.classList.add('hidden');
-      historyBtn.classList.add('hidden');
       wrap.className = 'welcome';
       wrap.innerHTML = `
         <div class="welcome-greet">Bienvenido a</div>
@@ -664,15 +721,90 @@ body{
       `;
       return;
     }
-    $('listScreen').classList.remove('welcome-bg');
-    $('newBtn').textContent = '+ Nuevo negocio';
+    $('homeScreen').classList.remove('welcome-bg');
+    $('newBusinessBtn').textContent = '+ Nuevo negocio';
+    summaryCard.classList.remove('hidden');
+    wrap.className = 'list-wrap';
+    wrap.innerHTML = '';
+ 
+    let totalPersonas = 0, totalMora = 0;
+    negocios.forEach(b=>{
+      (b.personas||[]).forEach(p=>{
+        totalPersonas++;
+        if(computeStats(p).interesMonto>0) totalMora++;
+      });
+    });
+    $('homeSummaryCount').textContent = negocios.length;
+    $('homeSummaryPersonas').textContent = `${totalPersonas} persona${totalPersonas===1?'':'s'}`;
+    $('homeSummaryMora').textContent = `${totalMora} en mora`;
+ 
+    negocios.forEach(b=>{
+      const personas = b.personas||[];
+      const totalPendiente = personas.reduce((sum,p)=> sum + computeStats(p).saldo, 0);
+      const card = document.createElement('div');
+      card.className = 'ncard';
+      card.innerHTML = `
+        <div class="ncard-top">
+          <div class="ncard-name">${b.nombre}</div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="ncard-date">${b.fecha ? fmtDate(b.fecha) : ''}</div>
+            <button type="button" class="ncard-delete">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            </button>
+          </div>
+        </div>
+        <div class="ncard-bottom">
+          <span class="amt">${personas.length} persona${personas.length===1?'':'s'}</span>
+          <span class="pct">${fmtCOP(totalPendiente)}</span>
+        </div>
+      `;
+      card.onclick = ()=> openBusiness(b.id);
+      const delBtn = card.querySelector('.ncard-delete');
+      delBtn.onclick = async (e)=>{
+        e.stopPropagation();
+        if(!deleteArmedIds.has(b.id)){
+          deleteArmedIds.add(b.id);
+          delBtn.classList.add('danger-armed');
+          showToast('Toca de nuevo para eliminar el negocio');
+          setTimeout(()=>{ deleteArmedIds.delete(b.id); delBtn.classList.remove('danger-armed'); }, 3000);
+          return;
+        }
+        deleteArmedIds.delete(b.id);
+        negocios = negocios.filter(x=>x.id!==b.id);
+        await saveNegocios();
+        renderHome();
+        showToast('Negocio eliminado');
+      };
+      wrap.appendChild(card);
+    });
+  }
+  function openBusiness(id){
+    currentBusinessId = id;
+    listFilter = 'todos';
+    renderList();
+    showScreen('listScreen');
+  }
+ 
+  /* ---------------- LIST (personas dentro de un negocio) ---------------- */
+  let listFilter = 'todos';
+ 
+  function renderList(){
+    const biz = currentBusiness();
+    if(!biz) return;
+    $('summaryBusinessName').textContent = biz.nombre;
+    const personas = biz.personas;
+    const wrap = $('listWrap');
+    const summaryCard = $('summaryCard');
+    const tabs = $('listTabs');
+    const historyBtn = $('historyBtn');
+    $('newBtn').textContent = '+ Nueva persona';
     summaryCard.classList.remove('hidden');
     tabs.classList.remove('hidden');
     historyBtn.classList.remove('hidden');
     wrap.className = 'list-wrap';
     wrap.innerHTML = '';
  
-    const withStats = negocios.map(n=> ({ n, s: computeStats(n) }));
+    const withStats = personas.map(n=> ({ n, s: computeStats(n) }));
  
     const totalPorCobrar = withStats.reduce((sum, x)=> sum + x.s.saldo, 0);
     const countActivos = withStats.filter(x=> x.s.saldo>0).length;
@@ -691,7 +823,9 @@ body{
     });
  
     if(filtered.length===0){
-      wrap.innerHTML = `<div class="empty-filter">No tienes negocios en esta categoría.</div>`;
+      wrap.innerHTML = personas.length===0
+        ? `<div class="empty-filter">Aún no tienes personas en ${biz.nombre}.<br>Toca "+ Nueva persona" para agregar la primera.</div>`
+        : `<div class="empty-filter">No tienes personas en esta categoría.</div>`;
       return;
     }
  
@@ -725,6 +859,8 @@ body{
     renderList();
   });
  
+  $('businessBack').onclick = ()=>{ renderHome(); showScreen('homeScreen'); };
+ 
   /* ---------------- HISTORIAL POR MES ---------------- */
   function monthLabel(key){
     const d = new Date(key+'-01T00:00:00');
@@ -733,7 +869,9 @@ body{
   }
   function groupAbonosByMonth(){
     const map = {};
-    negocios.forEach(n=>{
+    const biz = currentBusiness();
+    if(!biz) return map;
+    biz.personas.forEach(n=>{
       (n.abonos||[]).forEach(a=>{
         const key = a.fecha.slice(0,7);
         if(!map[key]) map[key] = [];
@@ -813,12 +951,14 @@ body{
     $('interesFields').classList.toggle('hidden', !interesActivo);
   };
   $('saveBtn').onclick = async ()=>{
+    const biz = currentBusiness();
+    if(!biz) return;
     const nombre = $('fName').value.trim();
     const valor = parseFloat($('fValor').value);
     const fecha = $('fFecha').value || todayISO();
     if(!nombre){ showToast('Escribe el nombre de la persona'); return; }
     if(!valor || valor<=0){ showToast('Escribe un valor válido'); return; }
-    const negocio = {
+    const persona = {
       id: Date.now().toString(),
       nombre, valor, fecha,
       abonos: [],
@@ -829,11 +969,11 @@ body{
         frecuencia: parseInt($('fFrecuencia').value)||1
       } : { activo:false, gracia:0, porcentaje:0, frecuencia:1 }
     };
-    negocios.push(negocio);
+    biz.personas.push(persona);
     await saveNegocios();
     renderList();
     showScreen('listScreen');
-    showToast('Negocio guardado');
+    showToast('Persona guardada');
   };
  
   /* ---------------- DETAIL ---------------- */
@@ -898,7 +1038,7 @@ body{
     }
   }
   function renderDetail(){
-    const n = negocios.find(x=>x.id===currentId);
+    const n = currentBusiness().personas.find(x=>x.id===currentId);
     if(!n) return;
     const s = computeStats(n);
     $('dName').textContent = n.nombre;
@@ -939,7 +1079,7 @@ body{
   $('detailBack').onclick = ()=>{ renderList(); showScreen('listScreen'); };
  
   $('editValorBtn').onclick = ()=>{
-    const n = negocios.find(x=>x.id===currentId);
+    const n = currentBusiness().personas.find(x=>x.id===currentId);
     if(!n) return;
     $('editValorInput').value = n.valor;
     $('editValorForm').classList.remove('hidden');
@@ -947,7 +1087,7 @@ body{
     $('editValorInput').focus();
   };
   $('editValorSave').onclick = async ()=>{
-    const n = negocios.find(x=>x.id===currentId);
+    const n = currentBusiness().personas.find(x=>x.id===currentId);
     if(!n) return;
     const nuevoValor = parseFloat($('editValorInput').value);
     if(!nuevoValor || nuevoValor<=0){ showToast('Escribe un monto válido'); return; }
@@ -966,7 +1106,7 @@ body{
   }
   $('imageModalClose').onclick = ()=> $('imageModal').classList.add('hidden');
   $('shareImgBtn').onclick = async ()=>{
-    const n = negocios.find(x=>x.id===currentId);
+    const n = currentBusiness().personas.find(x=>x.id===currentId);
     showToast('Generando imagen...');
     const canvas = await renderReceiptCanvas(n);
     const dataUrl = canvas.toDataURL('image/png');
@@ -987,7 +1127,7 @@ body{
   };
   $('showAbonoForm').onclick = ()=>{ $('abonoForm').classList.toggle('hidden'); };
   $('addAbonoBtn').onclick = async ()=>{
-    const n = negocios.find(x=>x.id===currentId);
+    const n = currentBusiness().personas.find(x=>x.id===currentId);
     const monto = parseFloat($('aMonto').value);
     const fecha = $('aFecha').value || todayISO();
     if(!monto || monto<=0){ showToast('Escribe un monto válido'); return; }
@@ -1003,19 +1143,39 @@ body{
     if(!deleteArmed){
       deleteArmed = true;
       $('deleteBtn').textContent = '¿Confirmar eliminación?';
-      setTimeout(()=>{ deleteArmed=false; $('deleteBtn').textContent='Eliminar negocio'; }, 3000);
+      setTimeout(()=>{ deleteArmed=false; $('deleteBtn').textContent='Eliminar persona'; }, 3000);
       return;
     }
-    negocios = negocios.filter(x=>x.id!==currentId);
+    const biz = currentBusiness();
+    biz.personas = biz.personas.filter(x=>x.id!==currentId);
     await saveNegocios();
     deleteArmed = false;
-    $('deleteBtn').textContent = 'Eliminar negocio';
+    $('deleteBtn').textContent = 'Eliminar persona';
     renderList();
     showScreen('listScreen');
-    showToast('Negocio eliminado');
+    showToast('Persona eliminada');
   };
  
-  loadNegocios().then(renderList);
+  /* ---------------- NUEVO NEGOCIO ---------------- */
+  $('newBusinessBtn').onclick = ()=>{
+    $('newBusinessInput').value = '';
+    $('newBusinessFecha').value = todayISO();
+    showScreen('newBusinessScreen');
+    $('newBusinessInput').focus();
+  };
+  $('newBusinessBack').onclick = ()=>{ renderHome(); showScreen('homeScreen'); };
+  $('newBusinessCreate').onclick = async ()=>{
+    const nombre = $('newBusinessInput').value.trim();
+    const fecha = $('newBusinessFecha').value || todayISO();
+    if(!nombre){ showToast('Escribe un nombre'); return; }
+    negocios.push({ id: Date.now().toString(), nombre, fecha, personas: [] });
+    await saveNegocios();
+    renderHome();
+    showScreen('homeScreen');
+    showToast('Negocio creado');
+  };
+ 
+  loadNegocios().then(renderHome);
 })();
 </script>
 </body>
