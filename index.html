@@ -331,7 +331,7 @@ body{
   background:var(--surface); border:1.5px solid var(--line); border-radius:14px;
   padding:14px 6px; cursor:pointer; color:var(--ink); font-family:'Inter',sans-serif;
 }
-.lang-btn .flag{ font-size:20px; line-height:1; }
+.lang-btn .code{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13px; letter-spacing:.03em; }
 .lang-btn .lbl{ font-size:12px; font-weight:700; }
 .lang-btn.active{ border-color:var(--green); background:var(--green-dim); color:var(--green-dark); }
 .currency-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; }
@@ -399,9 +399,9 @@ body{
     <div class="settings-section">
       <div class="settings-section-title" id="settingsLanguageLabel">Idioma</div>
       <div class="lang-row" id="langRow">
-        <button type="button" class="lang-btn" data-lang="es"><span class="flag">🇪🇸</span><span class="lbl">Español</span></button>
-        <button type="button" class="lang-btn" data-lang="en"><span class="flag">🇺🇸</span><span class="lbl">English</span></button>
-        <button type="button" class="lang-btn" data-lang="pt"><span class="flag">🇧🇷</span><span class="lbl">Português</span></button>
+        <button type="button" class="lang-btn" data-lang="es"><span class="code">ES</span><span class="lbl">Español</span></button>
+        <button type="button" class="lang-btn" data-lang="en"><span class="code">US</span><span class="lbl">English</span></button>
+        <button type="button" class="lang-btn" data-lang="pt"><span class="code">BR</span><span class="lbl">Português</span></button>
       </div>
     </div>
  
