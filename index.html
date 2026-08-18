@@ -19,6 +19,7 @@
   --ink:#14201A;
   --ink-dim:#6E7D72;
   --green:#16A34A;
+  --green-dark:#15803D;
   --green-dim:#D7F5DE;
   --amber:#B45309;
   --amber-tint:#FEF3C7;
@@ -173,6 +174,7 @@ body{
 }
 .ncard-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
 .ncard-name{ font-weight:700; font-size:16px; display:flex; align-items:center; gap:7px; }
+.ncard-name.biz-name{ color:var(--green); }
 .ncard-dot{ width:8px; height:8px; border-radius:50%; flex:none; }
 .ncard-date{ font-size:11.5px; color:var(--ink-dim); }
 .pbar{ height:9px; border-radius:6px; background:var(--surface2); overflow:hidden; }
@@ -180,9 +182,12 @@ body{
 .ncard-bottom{ display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:12.5px; }
 .ncard-bottom .amt{ color:var(--ink-dim); }
 .ncard-bottom .pct{ font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--green); }
-.ncard-bottom-label{ font-size:10.5px; color:var(--ink-dim); font-weight:600; }
-.ncard-bottom-right{ display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
-.mora-tag{ font-size:10.5px; color:var(--amber); margin-top:5px; }
+.mora-tag{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:10.5px; font-weight:600; color:#FFFFFF;
+  background:var(--amber); padding:4px 9px; border-radius:8px; margin-top:6px;
+}
+.mora-tag-icon{ width:11px; height:11px; flex:none; }
 .paid-badge{
   position:absolute; top:12px; right:14px; font-size:10px; font-weight:700; color:var(--green);
   border:1px solid var(--green); border-radius:8px; padding:2px 7px; transform:rotate(-6deg);
@@ -304,6 +309,40 @@ body{
 .ncard-delete svg{ width:12px; height:12px; }
 .ncard-delete.danger-armed{ background:var(--red); color:#FFFFFF; }
  
+.notes-textarea{
+  flex:1; width:100%; resize:none;
+  background:var(--surface2); border:1px solid var(--line); border-radius:14px;
+  padding:14px; color:var(--ink); font-size:15px; font-family:'Inter',sans-serif; line-height:1.55;
+  outline:none;
+}
+.notes-textarea:focus{ border-color:var(--green); }
+.notes-saved-hint{
+  align-self:center; font-size:11.5px; color:var(--ink-dim); font-weight:600;
+  opacity:0; transition:opacity .3s ease; margin-top:2px;
+}
+.notes-saved-hint.show{ opacity:1; }
+ 
+/* ---------- ajustes ---------- */
+.settings-section{ display:flex; flex-direction:column; gap:10px; }
+.settings-section-title{ font-size:12.5px; color:var(--ink-dim); font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+.lang-row{ display:flex; gap:8px; }
+.lang-btn{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  background:var(--surface); border:1.5px solid var(--line); border-radius:14px;
+  padding:14px 6px; cursor:pointer; color:var(--ink); font-family:'Inter',sans-serif;
+}
+.lang-btn .flag{ font-size:20px; line-height:1; }
+.lang-btn .lbl{ font-size:12px; font-weight:700; }
+.lang-btn.active{ border-color:var(--green); background:var(--green-dim); color:var(--green-dark); }
+.currency-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; }
+.currency-btn{
+  background:var(--surface); border:1.5px solid var(--line); border-radius:12px;
+  padding:12px 4px; cursor:pointer; color:var(--ink);
+  font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12.5px; text-align:center;
+}
+.currency-btn.active{ border-color:var(--green); background:var(--green-dim); color:var(--green-dark); }
+.settings-note{ font-size:11.5px; color:var(--ink-dim); line-height:1.5; }
+ 
 @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
 </style>
 </head>
@@ -313,9 +352,19 @@ body{
  
   <!-- HOME (lista de negocios) -->
   <div class="list-screen" id="homeScreen">
-    <div class="topbar"><h1 class="logo">Pre<span class="accent">fi</span></h1></div>
+    <div class="topbar">
+      <h1 class="logo">Pre<span class="accent">fi</span></h1>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="icon-btn" id="notesBtn" aria-label="Notas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px;"><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"></path><line x1="9" y1="13" x2="15" y2="13"></line><line x1="9" y1="17" x2="13" y2="17"></line></svg>
+        </button>
+        <button type="button" class="icon-btn" id="settingsBtn" aria-label="Ajustes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg>
+        </button>
+      </div>
+    </div>
     <div class="summary-card hidden" id="homeSummaryCard">
-      <div class="summary-label">TUS NEGOCIOS</div>
+      <div class="summary-label" id="homeSummaryLabel">TUS NEGOCIOS</div>
       <div class="summary-amount mono" id="homeSummaryCount">0</div>
       <div class="summary-pills">
         <div class="summary-pill">
@@ -329,11 +378,38 @@ body{
       </div>
       <button type="button" class="summary-history-btn" id="globalHistoryBtn">
         <svg class="summary-history-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-        Historial de todos tus negocios por mes
+        <span id="globalHistoryBtnLabel">Historial de todos tus negocios por mes</span>
       </button>
     </div>
     <div class="list-wrap" id="homeWrap"></div>
     <button class="fab" id="newBusinessBtn">+ Nuevo negocio</button>
+  </div>
+ 
+  <!-- NOTAS -->
+  <div class="form-screen hidden" id="notesScreen">
+    <div class="topbar"><div class="icon-btn" id="notesBack">←</div><h1 class="display" id="notesTitle" style="font-size:19px;">Notas</h1><div style="width:38px;"></div></div>
+    <textarea id="notesTextarea" class="notes-textarea" placeholder="Escribe aquí lo que quieras recordar: acuerdos, pendientes, recordatorios..."></textarea>
+    <div class="notes-saved-hint" id="notesSavedHint">Guardado</div>
+  </div>
+ 
+  <!-- AJUSTES -->
+  <div class="form-screen hidden" id="settingsScreen">
+    <div class="topbar"><div class="icon-btn" id="settingsBack">←</div><h1 class="display" id="settingsTitle" style="font-size:19px;">Ajustes</h1><div style="width:38px;"></div></div>
+ 
+    <div class="settings-section">
+      <div class="settings-section-title" id="settingsLanguageLabel">Idioma</div>
+      <div class="lang-row" id="langRow">
+        <button type="button" class="lang-btn" data-lang="es"><span class="flag">🇪🇸</span><span class="lbl">Español</span></button>
+        <button type="button" class="lang-btn" data-lang="en"><span class="flag">🇺🇸</span><span class="lbl">English</span></button>
+        <button type="button" class="lang-btn" data-lang="pt"><span class="flag">🇧🇷</span><span class="lbl">Português</span></button>
+      </div>
+    </div>
+ 
+    <div class="settings-section">
+      <div class="settings-section-title" id="settingsCurrencyLabel">Moneda</div>
+      <div class="currency-grid" id="currencyGrid"></div>
+      <div class="settings-note" id="settingsCurrencyNote">Se aplica a todos los montos de la aplicación.</div>
+    </div>
   </div>
  
   <!-- NEGOCIO (lista de personas dentro de un negocio) -->
@@ -345,11 +421,11 @@ body{
     </div>
     <button type="button" class="history-btn hidden" id="historyBtn">
       <svg class="history-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-      Historial por mes
+      <span id="historyBtnLabel">Historial por mes</span>
     </button>
     <div class="summary-card hidden" id="summaryCard">
       <div class="summary-top-row">
-        <div class="summary-label">TOTAL POR COBRAR</div>
+        <div class="summary-label" id="summaryLabel">TOTAL POR COBRAR</div>
         <div class="summary-business-name" id="summaryBusinessName"></div>
       </div>
       <div class="summary-amount mono" id="summaryAmount">$0</div>
@@ -365,9 +441,9 @@ body{
       </div>
     </div>
     <div class="tabs hidden" id="listTabs">
-      <button type="button" class="tab-btn active" data-filter="todos">Todos</button>
-      <button type="button" class="tab-btn" data-filter="activos">Activos</button>
-      <button type="button" class="tab-btn" data-filter="pagados">Pagados</button>
+      <button type="button" class="tab-btn active" data-filter="todos" id="tabTodos">Todos</button>
+      <button type="button" class="tab-btn" data-filter="activos" id="tabActivos">Activos</button>
+      <button type="button" class="tab-btn" data-filter="pagados" id="tabPagados">Pagados</button>
     </div>
     <div class="list-wrap" id="listWrap"></div>
     <button class="fab" id="newBtn">+ Nueva persona</button>
@@ -375,39 +451,39 @@ body{
  
   <!-- NUEVO NEGOCIO -->
   <div class="form-screen hidden" id="newBusinessScreen">
-    <div class="topbar"><div class="icon-btn" id="newBusinessBack">←</div><h1 class="display" style="font-size:19px;">Nuevo negocio</h1><div style="width:38px;"></div></div>
-    <div class="field"><label>Nombre del negocio</label><input type="text" id="newBusinessInput"></div>
-    <div class="field"><label>Fecha</label><input type="date" id="newBusinessFecha"></div>
+    <div class="topbar"><div class="icon-btn" id="newBusinessBack">←</div><h1 class="display" id="newBusinessTitle" style="font-size:19px;">Nuevo negocio</h1><div style="width:38px;"></div></div>
+    <div class="field"><label id="newBusinessNameLabel">Nombre del negocio</label><input type="text" id="newBusinessInput"></div>
+    <div class="field"><label id="newBusinessDateLabel">Fecha</label><input type="date" id="newBusinessFecha"></div>
     <div style="flex:1;"></div>
     <button class="btn" id="newBusinessCreate">Guardar negocio</button>
   </div>
  
   <!-- FORM -->
   <div class="form-screen hidden" id="formScreen">
-    <div class="topbar"><div class="icon-btn" id="formBack">←</div><h1 class="display" style="font-size:19px;">Nueva persona</h1><div style="width:38px;"></div></div>
+    <div class="topbar"><div class="icon-btn" id="formBack">←</div><h1 class="display" id="formTitle" style="font-size:19px;">Nueva persona</h1><div style="width:38px;"></div></div>
  
-    <div class="field"><label>Nombre de la persona</label><input type="text" id="fName"></div>
-    <div class="field"><label>Valor de la deuda (COP)</label><input type="number" id="fValor"></div>
-    <div class="field"><label>Fecha</label><input type="date" id="fFecha"></div>
+    <div class="field"><label id="personNameLabel">Nombre de la persona</label><input type="text" id="fName"></div>
+    <div class="field"><label id="debtValueLabel">Valor de la deuda (COP)</label><input type="text" inputmode="numeric" id="fValor" placeholder="Ej: 40.000"></div>
+    <div class="field"><label id="formDateLabel">Fecha</label><input type="date" id="fFecha"></div>
  
     <div class="toggle-row">
-      <span style="font-size:14px; font-weight:600;">Cobrar interés por mora</span>
+      <span style="font-size:14px; font-weight:600;" id="interesToggleLabel">Cobrar interés por mora</span>
       <div class="switch" id="interesSwitch"><div class="knob"></div></div>
     </div>
  
     <div class="sub-fields hidden" id="interesFields">
-      <div class="field"><label>Días antes de que empiece a subir el interés</label><input type="number" id="fGracia" placeholder="Ej: 20"></div>
+      <div class="field"><label id="graciaLabel">Días antes de que empiece a subir el interés</label><input type="number" id="fGracia" placeholder="Ej: 20"></div>
       <div class="grid2">
-        <div class="field"><label>% de interés por periodo</label><input type="number" id="fPorcentaje" placeholder="Ej: 1" step="0.1"></div>
-        <div class="field"><label>Frecuencia</label>
+        <div class="field"><label id="porcentajeLabel">% de interés por periodo</label><input type="number" id="fPorcentaje" placeholder="Ej: 1" step="0.1"></div>
+        <div class="field"><label id="frecuenciaLabel">Frecuencia</label>
           <select id="fFrecuencia">
-            <option value="1">Cada día</option>
-            <option value="3">Cada 3 días</option>
-            <option value="7">Cada semana</option>
+            <option value="1" id="freqDayOpt">Cada día</option>
+            <option value="3" id="freq3Opt">Cada 3 días</option>
+            <option value="7" id="freqWeekOpt">Cada semana</option>
           </select>
         </div>
       </div>
-      <div style="font-size:11.5px; color:var(--ink-dim);">El interés se acumula hasta un máximo del 100% del valor de la deuda.</div>
+      <div style="font-size:11.5px; color:var(--ink-dim);" id="interesMaxNote">El interés se acumula hasta un máximo del 100% del valor de la deuda.</div>
     </div>
  
     <div style="flex:1;"></div>
@@ -422,13 +498,13 @@ body{
       <div class="date" id="dDate"></div>
     </div>
     <div class="saldo-num mono" id="dSaldo"></div>
-    <div class="saldo-lbl">Saldo pendiente</div>
+    <div class="saldo-lbl" id="saldoLabel">Saldo pendiente</div>
     <button type="button" class="edit-valor-btn" id="editValorBtn">
       <svg class="edit-valor-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
-      Editar monto
+      <span id="editValorLabel">Editar monto</span>
     </button>
     <div class="edit-valor-form hidden" id="editValorForm">
-      <input type="number" id="editValorInput" placeholder="Nuevo valor del negocio">
+      <input type="text" inputmode="numeric" id="editValorInput" placeholder="Nuevo valor del negocio">
       <button type="button" id="editValorSave">Guardar</button>
     </div>
     <div class="pbar big"><div class="pbar-fill" id="dBarFill"></div></div>
@@ -436,26 +512,26 @@ body{
     <div id="interestBox"></div>
  
     <div class="breakdown">
-      <div class="brow"><span class="lbl">Valor original</span><span class="val mono" id="dValor"></span></div>
-      <div class="brow amber" id="dInteresRow"><span class="lbl">Interés acumulado</span><span class="val mono" id="dInteres"></span></div>
-      <div class="brow"><span class="lbl">Total a pagar</span><span class="val mono" id="dTotal"></span></div>
-      <div class="brow"><span class="lbl">Abonado</span><span class="val mono" id="dAbonado"></span></div>
+      <div class="brow"><span class="lbl" id="lblValorOriginal">Valor original</span><span class="val mono" id="dValor"></span></div>
+      <div class="brow amber" id="dInteresRow"><span class="lbl" id="lblInteresAcumulado">Interés acumulado</span><span class="val mono" id="dInteres"></span></div>
+      <div class="brow"><span class="lbl" id="lblTotalPagar">Total a pagar</span><span class="val mono" id="dTotal"></span></div>
+      <div class="brow"><span class="lbl" id="lblAbonado">Abonado</span><span class="val mono" id="dAbonado"></span></div>
     </div>
  
     <button class="btn" id="showAbonoForm">Registrar abono</button>
     <div class="abono-form hidden" id="abonoForm">
-      <div class="field"><label>Monto abonado (COP)</label><input type="number" id="aMonto" placeholder="Ej: 40000"></div>
-      <div class="field"><label>Fecha</label><input type="date" id="aFecha"></div>
+      <div class="field"><label id="abonoAmountLabel">Monto abonado (COP)</label><input type="text" inputmode="numeric" id="aMonto" placeholder="Ej: 40.000"></div>
+      <div class="field"><label id="abonoDateLabel">Fecha</label><input type="date" id="aFecha"></div>
       <button class="btn" id="addAbonoBtn">Agregar abono</button>
     </div>
  
     <button class="btn ghost" id="shareImgBtn">
       <svg class="share-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17v-2a4 4 0 0 1 4-4h12"></path><path d="M14 7l6 4-6 4"></path></svg>
-      Compartir estado con <span id="shareName"></span>
+      <span id="shareLabel">Compartir estado con</span> <span id="shareName"></span>
     </button>
  
     <div>
-      <div style="font-size:12.5px; color:var(--ink-dim); font-weight:600; margin-bottom:8px;">Historial de abonos</div>
+      <div style="font-size:12.5px; color:var(--ink-dim); font-weight:600; margin-bottom:8px;" id="abonoHistoryLabel">Historial de abonos</div>
       <div class="abono-list" id="abonoList"></div>
     </div>
  
@@ -464,21 +540,21 @@ body{
  
   <!-- HISTORIAL POR MES -->
   <div class="detail-screen hidden" id="historyScreen">
-    <div class="topbar"><div class="icon-btn" id="historyBack">←</div><h1 class="display" style="font-size:19px;">Historial por mes</h1><div style="width:38px;"></div></div>
+    <div class="topbar"><div class="icon-btn" id="historyBack">←</div><h1 class="display" id="historyTitle" style="font-size:19px;">Historial por mes</h1><div style="width:38px;"></div></div>
     <div id="historyList"></div>
   </div>
  
   <!-- HISTORIAL DE TODOS LOS NEGOCIOS -->
   <div class="detail-screen hidden" id="globalHistoryScreen">
-    <div class="topbar"><div class="icon-btn" id="globalHistoryBack">←</div><h1 class="display" style="font-size:15px; flex:1; min-width:0; text-align:center; line-height:1.3; padding:0 6px;">Historial de todos tus negocios por mes</h1><div style="width:38px; flex:none;"></div></div>
+    <div class="topbar"><div class="icon-btn" id="globalHistoryBack">←</div><h1 class="display" id="globalHistoryTitle" style="font-size:15px; flex:1; min-width:0; text-align:center; line-height:1.3; padding:0 6px;">Historial de todos tus negocios por mes</h1><div style="width:38px; flex:none;"></div></div>
     <div id="globalHistoryList"></div>
   </div>
  
   <!-- Imagen del comprobante generada + respaldo para guardar/compartir -->
   <div class="modal-overlay hidden" id="imageModal">
     <div class="modal-card">
-      <h3>Comprobante listo</h3>
-      <p>Mantén presionada la imagen para guardarla o compartirla directamente, o descárgala.</p>
+      <h3 id="receiptReadyTitle">Comprobante listo</h3>
+      <p id="receiptHintText">Mantén presionada la imagen para guardarla o compartirla directamente, o descárgala.</p>
       <img id="receiptImg" style="width:100%; border-radius:12px; border:1px solid var(--line); display:block;">
       <div class="modal-actions">
         <button class="btn ghost" id="imageModalClose">Cerrar</button>
@@ -492,11 +568,271 @@ body{
 (function(){
   const STORAGE_KEY = 'fiado:negocios';
   const HIST_KEY = 'fiado:historial-vistos-v2';
+  const NOTES_KEY = 'fiado:notas';
   let negocios = [];
   let historialVistos = {};
   let currentBusinessId = null;
   let currentId = null;
   const $ = id => document.getElementById(id);
+ 
+  /* ---------------- IDIOMA Y MONEDA ---------------- */
+  const LANG_KEY = 'fiado:idioma';
+  const CURRENCY_KEY = 'fiado:moneda';
+  const CURRENCIES = ['USD','EUR','ARS','BOB','BRL','CLP','COP','CRC','GTQ','HNL','MXN','NIO','PAB','PYG','PEN','DOP','UYU'];
+  const LOCALE_MAP = { es:'es-CO', en:'en-US', pt:'pt-BR' };
+  let LANG = 'es';
+  let CURRENCY = 'COP';
+  try{ LANG = localStorage.getItem(LANG_KEY) || 'es'; }catch(e){}
+  try{ CURRENCY = localStorage.getItem(CURRENCY_KEY) || 'COP'; }catch(e){}
+ 
+  const T = {
+    es: {
+      notesTitle:'Notas', notesPlaceholder:'Escribe aquí lo que quieras recordar: acuerdos, pendientes, recordatorios...', notesSaved:'Guardado',
+      settingsTitle:'Ajustes', settingsLanguage:'Idioma', settingsCurrency:'Moneda',
+      settingsCurrencyNote:'Se aplica a todos los montos de la aplicación.',
+      homeSummaryLabel:'TUS NEGOCIOS', globalHistoryBtnLabel:'Historial de todos tus negocios por mes',
+      historyBtnLabel:'Historial por mes', summaryLabel:'TOTAL POR COBRAR',
+      tabTodos:'Todos', tabActivos:'Activos', tabPagados:'Pagados', paidBadge:'PAGADO',
+      newBusinessTitle:'Nuevo negocio', newBusinessNameLabel:'Nombre del negocio', newBusinessDateLabel:'Fecha', newBusinessCreate:'Guardar negocio',
+      formTitle:'Nueva persona', personNameLabel:'Nombre de la persona', formDateLabel:'Fecha',
+      debtValueLabel:(c)=>`Valor de la deuda (${c})`,
+      interesToggleLabel:'Cobrar interés por mora', graciaLabel:'Días antes de que empiece a subir el interés',
+      porcentajeLabel:'% de interés por periodo', frecuenciaLabel:'Frecuencia',
+      freqDayOpt:'Cada día', freq3Opt:'Cada 3 días', freqWeekOpt:'Cada semana',
+      interesMaxNote:'El interés se acumula hasta un máximo del 100% del valor de la deuda.',
+      saveBtn:'Guardar persona', saldoLabel:'Saldo pendiente', editValorLabel:'Editar monto', editValorPlaceholder:'Nuevo valor del negocio', editValorSave:'Guardar',
+      lblValorOriginal:'Valor original', lblInteresAcumulado:'Interés acumulado', lblTotalPagar:'Total a pagar', lblAbonado:'Abonado',
+      showAbonoForm:'Registrar abono', abonoAmountLabel:(c)=>`Monto abonado (${c})`, abonoDateLabel:'Fecha', addAbonoBtn:'Agregar abono',
+      shareLabel:'Compartir estado con', abonoHistoryLabel:'Historial de abonos', deleteBtn:'Eliminar persona', deleteBtnConfirm:'¿Confirmar eliminación?',
+      historyTitle:'Historial por mes', globalHistoryTitle:'Historial de todos tus negocios por mes',
+      receiptReadyTitle:'Comprobante listo', receiptHintText:'Mantén presionada la imagen para guardarla o compartirla directamente, o descárgala.',
+      imageModalClose:'Cerrar', imageDownloadBtn:'Descargar',
+      welcomeGreet:'Bienvenido a', welcomeText:'Aquí llevas el control claro de tus negocios y cobros: cuánto te deben, cuánto te han abonado y si hay intereses por mora.',
+      startBtn:'Comenzar', newBusinessBtnPlus:'+ Nuevo negocio', newPersonBtnPlus:'+ Nueva persona',
+      personas:(n)=>`${n} persona${n===1?'':'s'}`, enMora:(n)=>`${n} en mora`, activos:(n)=>`${n} activos`,
+      emptyPersonasBiz:(nombre)=>`Aún no tienes personas en ${nombre}.<br>Toca "+ Nueva persona" para agregar la primera.`,
+      emptyPersonasCategory:'No tienes personas en esta categoría.', of:'de',
+      diasDeMora:(dias,interesFmt)=>`${dias} ${dias===1?'día':'días'} de mora · +${interesFmt} de interés`,
+      receiptMoraLine:(dias,pct,freqTxt)=>`${dias} ${dias===1?'día':'días'} de mora · sube ${pct}% cada ${freqTxt} (tope 100%)`,
+      abonoCount:(n)=>`${n} abono${n===1?'':'s'}`, cobradoLbl:'Cobrado', porCobrarLbl:'Por cobrar',
+      personasNuevas:(n)=>`${n} persona${n===1?'':'s'} nueva${n===1?'':'s'}`,
+      noMovimientosNegocio:'Todavía no tienes movimientos en este negocio.', noMovimientosGlobal:'Todavía no tienes movimientos registrados.',
+      mesQuitado:'Mes quitado del historial', tocaEliminarNegocio:'Toca de nuevo para eliminar el negocio', negocioEliminado:'Negocio eliminado',
+      escribeNombrePersona:'Escribe el nombre de la persona', escribeValorValido:'Escribe un valor válido', personaGuardada:'Persona guardada',
+      escribeMontoValido:'Escribe un monto válido', montoActualizado:'Monto actualizado', generandoImagen:'Generando imagen...',
+      abonoRegistrado:'Abono registrado', personaEliminada:'Persona eliminada', escribeNombre:'Escribe un nombre', negocioCreado:'Negocio creado',
+      sinAbonos:'Sin abonos todavía',
+      diasParaEmpezarInteres:'Días para que empiece el interés', interesAcumuladoLbl:'Interés acumulado',
+      faltanDias:(faltan,fecha)=>`Faltan ${faltan} ${faltan===1?'día':'días'} · el interés empieza a subir el ${fecha}`,
+      sobreValorOriginal:(montoFmt,pct,freqTxt)=>`+${montoFmt} sobre el valor original · sube ${pct}% cada ${freqTxt} (tope 100%)`,
+      freqUnit:(n)=> n===1?'día':`${n} días`,
+      historialInteresHeading:(dias,periodos)=>`Historial de interés · ${dias} ${dias===1?'día activo':'días activo'} · ${periodos} ${periodos===1?'periodo cumplido':'periodos cumplidos'}`,
+      mostrandoUltimos:(maxShow,periodos)=>`Mostrando los últimos ${maxShow} de ${periodos} periodos`,
+      acumuladoLbl:'acumulado',
+      deudaSaldadaMsg:'Deuda saldada · el interés dejó de subir',
+      generadoEl:'Generado el', negocioCon:'Negocio con', desdeEl:'Desde el', saldoPendienteUpper:'SALDO PENDIENTE', pagadoPct:'% pagado',
+      diasParaInteresUpper:'DÍAS PARA QUE EMPIECE EL INTERÉS', interesAcumuladoUpper:'INTERÉS ACUMULADO',
+      estadoNegocioCon:(nombre)=>`Estado del negocio con ${nombre}`,
+      placeholderMonto:'Ej: 40.000', placeholderDias:'Ej: 20', placeholderPct:'Ej: 1',
+    },
+    en: {
+      notesTitle:'Notes', notesPlaceholder:'Write here what you want to remember: agreements, pending items, reminders...', notesSaved:'Saved',
+      settingsTitle:'Settings', settingsLanguage:'Language', settingsCurrency:'Currency',
+      settingsCurrencyNote:'Applies to all amounts across the app.',
+      homeSummaryLabel:'YOUR BUSINESSES', globalHistoryBtnLabel:'History of all your businesses by month',
+      historyBtnLabel:'History by month', summaryLabel:'TOTAL TO COLLECT',
+      tabTodos:'All', tabActivos:'Active', tabPagados:'Paid', paidBadge:'PAID',
+      newBusinessTitle:'New business', newBusinessNameLabel:'Business name', newBusinessDateLabel:'Date', newBusinessCreate:'Save business',
+      formTitle:'New person', personNameLabel:"Person's name", formDateLabel:'Date',
+      debtValueLabel:(c)=>`Debt amount (${c})`,
+      interesToggleLabel:'Charge late interest', graciaLabel:'Days before interest starts increasing',
+      porcentajeLabel:'% interest per period', frecuenciaLabel:'Frequency',
+      freqDayOpt:'Every day', freq3Opt:'Every 3 days', freqWeekOpt:'Every week',
+      interesMaxNote:'Interest accrues up to a maximum of 100% of the debt amount.',
+      saveBtn:'Save person', saldoLabel:'Outstanding balance', editValorLabel:'Edit amount', editValorPlaceholder:'New business amount', editValorSave:'Save',
+      lblValorOriginal:'Original amount', lblInteresAcumulado:'Accrued interest', lblTotalPagar:'Total to pay', lblAbonado:'Paid',
+      showAbonoForm:'Register payment', abonoAmountLabel:(c)=>`Amount paid (${c})`, abonoDateLabel:'Date', addAbonoBtn:'Add payment',
+      shareLabel:'Share status with', abonoHistoryLabel:'Payment history', deleteBtn:'Delete person', deleteBtnConfirm:'Confirm deletion?',
+      historyTitle:'History by month', globalHistoryTitle:'History of all your businesses by month',
+      receiptReadyTitle:'Receipt ready', receiptHintText:'Press and hold the image to save or share it directly, or download it.',
+      imageModalClose:'Close', imageDownloadBtn:'Download',
+      welcomeGreet:'Welcome to', welcomeText:'Here you keep clear track of your businesses and collections: how much people owe you, how much they\u2019ve paid, and whether there\u2019s late interest.',
+      startBtn:'Get started', newBusinessBtnPlus:'+ New business', newPersonBtnPlus:'+ New person',
+      personas:(n)=>`${n} ${n===1?'person':'people'}`, enMora:(n)=>`${n} overdue`, activos:(n)=>`${n} active`,
+      emptyPersonasBiz:(nombre)=>`You don't have any people in ${nombre} yet.<br>Tap "+ New person" to add the first one.`,
+      emptyPersonasCategory:'You have no people in this category.', of:'of',
+      diasDeMora:(dias,interesFmt)=>`${dias} ${dias===1?'day':'days'} overdue · +${interesFmt} interest`,
+      receiptMoraLine:(dias,pct,freqTxt)=>`${dias} ${dias===1?'day':'days'} overdue · rises ${pct}% every ${freqTxt} (100% cap)`,
+      abonoCount:(n)=>`${n} payment${n===1?'':'s'}`, cobradoLbl:'Collected', porCobrarLbl:'Outstanding',
+      personasNuevas:(n)=>`${n} new ${n===1?'person':'people'}`,
+      noMovimientosNegocio:'You don\u2019t have any activity in this business yet.', noMovimientosGlobal:'You don\u2019t have any recorded activity yet.',
+      mesQuitado:'Month removed from history', tocaEliminarNegocio:'Tap again to delete the business', negocioEliminado:'Business deleted',
+      escribeNombrePersona:"Enter the person's name", escribeValorValido:'Enter a valid amount', personaGuardada:'Person saved',
+      escribeMontoValido:'Enter a valid amount', montoActualizado:'Amount updated', generandoImagen:'Generating image...',
+      abonoRegistrado:'Payment registered', personaEliminada:'Person deleted', escribeNombre:'Enter a name', negocioCreado:'Business created',
+      sinAbonos:'No payments yet',
+      diasParaEmpezarInteres:'Days until interest starts', interesAcumuladoLbl:'Accrued interest',
+      faltanDias:(faltan,fecha)=>`${faltan} ${faltan===1?'day':'days'} left · interest starts increasing on ${fecha}`,
+      sobreValorOriginal:(montoFmt,pct,freqTxt)=>`+${montoFmt} on top of the original amount · rises ${pct}% every ${freqTxt} (100% cap)`,
+      freqUnit:(n)=> n===1?'day':`${n} days`,
+      historialInteresHeading:(dias,periodos)=>`Interest history · ${dias} ${dias===1?'day active':'days active'} · ${periodos} ${periodos===1?'period completed':'periods completed'}`,
+      mostrandoUltimos:(maxShow,periodos)=>`Showing the last ${maxShow} of ${periodos} periods`,
+      acumuladoLbl:'accrued',
+      deudaSaldadaMsg:'Debt settled · interest has stopped increasing',
+      generadoEl:'Generated on', negocioCon:'Business with', desdeEl:'Since', saldoPendienteUpper:'OUTSTANDING BALANCE', pagadoPct:'% paid',
+      diasParaInteresUpper:'DAYS UNTIL INTEREST STARTS', interesAcumuladoUpper:'ACCRUED INTEREST',
+      estadoNegocioCon:(nombre)=>`Business status with ${nombre}`,
+      placeholderMonto:'e.g. 40,000', placeholderDias:'e.g. 20', placeholderPct:'e.g. 1',
+    },
+    pt: {
+      notesTitle:'Notas', notesPlaceholder:'Escreva aqui o que você quiser lembrar: acordos, pendências, lembretes...', notesSaved:'Salvo',
+      settingsTitle:'Ajustes', settingsLanguage:'Idioma', settingsCurrency:'Moeda',
+      settingsCurrencyNote:'Aplica-se a todos os valores do aplicativo.',
+      homeSummaryLabel:'SEUS NEGÓCIOS', globalHistoryBtnLabel:'Histórico de todos os seus negócios por mês',
+      historyBtnLabel:'Histórico por mês', summaryLabel:'TOTAL A RECEBER',
+      tabTodos:'Todos', tabActivos:'Ativos', tabPagados:'Pagos', paidBadge:'PAGO',
+      newBusinessTitle:'Novo negócio', newBusinessNameLabel:'Nome do negócio', newBusinessDateLabel:'Data', newBusinessCreate:'Salvar negócio',
+      formTitle:'Nova pessoa', personNameLabel:'Nome da pessoa', formDateLabel:'Data',
+      debtValueLabel:(c)=>`Valor da dívida (${c})`,
+      interesToggleLabel:'Cobrar juros por atraso', graciaLabel:'Dias antes de o juro começar a subir',
+      porcentajeLabel:'% de juros por período', frecuenciaLabel:'Frequência',
+      freqDayOpt:'Todo dia', freq3Opt:'A cada 3 dias', freqWeekOpt:'Toda semana',
+      interesMaxNote:'O juro acumula até um máximo de 100% do valor da dívida.',
+      saveBtn:'Salvar pessoa', saldoLabel:'Saldo pendente', editValorLabel:'Editar valor', editValorPlaceholder:'Novo valor do negócio', editValorSave:'Salvar',
+      lblValorOriginal:'Valor original', lblInteresAcumulado:'Juros acumulados', lblTotalPagar:'Total a pagar', lblAbonado:'Pago',
+      showAbonoForm:'Registrar pagamento', abonoAmountLabel:(c)=>`Valor pago (${c})`, abonoDateLabel:'Data', addAbonoBtn:'Adicionar pagamento',
+      shareLabel:'Compartilhar status com', abonoHistoryLabel:'Histórico de pagamentos', deleteBtn:'Excluir pessoa', deleteBtnConfirm:'Confirmar exclusão?',
+      historyTitle:'Histórico por mês', globalHistoryTitle:'Histórico de todos os seus negócios por mês',
+      receiptReadyTitle:'Comprovante pronto', receiptHintText:'Mantenha pressionada a imagem para salvá-la ou compartilhá-la diretamente, ou baixe-a.',
+      imageModalClose:'Fechar', imageDownloadBtn:'Baixar',
+      welcomeGreet:'Bem-vindo ao', welcomeText:'Aqui você tem o controle claro dos seus negócios e cobranças: quanto devem a você, quanto já pagaram e se há juros por atraso.',
+      startBtn:'Começar', newBusinessBtnPlus:'+ Novo negócio', newPersonBtnPlus:'+ Nova pessoa',
+      personas:(n)=>`${n} pessoa${n===1?'':'s'}`, enMora:(n)=>`${n} em atraso`, activos:(n)=>`${n} ativos`,
+      emptyPersonasBiz:(nombre)=>`Você ainda não tem pessoas em ${nombre}.<br>Toque em "+ Nova pessoa" para adicionar a primeira.`,
+      emptyPersonasCategory:'Você não tem pessoas nesta categoria.', of:'de',
+      diasDeMora:(dias,interesFmt)=>`${dias} ${dias===1?'dia':'dias'} de atraso · +${interesFmt} de juros`,
+      receiptMoraLine:(dias,pct,freqTxt)=>`${dias} ${dias===1?'dia':'dias'} de atraso · sobe ${pct}% a cada ${freqTxt} (limite de 100%)`,
+      abonoCount:(n)=>`${n} pagamento${n===1?'':'s'}`, cobradoLbl:'Recebido', porCobrarLbl:'A receber',
+      personasNuevas:(n)=>`${n} pessoa${n===1?'':'s'} nova${n===1?'':'s'}`,
+      noMovimientosNegocio:'Você ainda não tem movimentações neste negócio.', noMovimientosGlobal:'Você ainda não tem movimentações registradas.',
+      mesQuitado:'Mês removido do histórico', tocaEliminarNegocio:'Toque novamente para excluir o negócio', negocioEliminado:'Negócio excluído',
+      escribeNombrePersona:'Digite o nome da pessoa', escribeValorValido:'Digite um valor válido', personaGuardada:'Pessoa salva',
+      escribeMontoValido:'Digite um valor válido', montoActualizado:'Valor atualizado', generandoImagen:'Gerando imagem...',
+      abonoRegistrado:'Pagamento registrado', personaEliminada:'Pessoa excluída', escribeNombre:'Digite um nome', negocioCreado:'Negócio criado',
+      sinAbonos:'Sem pagamentos ainda',
+      diasParaEmpezarInteres:'Dias até o juro começar', interesAcumuladoLbl:'Juros acumulados',
+      faltanDias:(faltan,fecha)=>`Faltam ${faltan} ${faltan===1?'dia':'dias'} · o juro começa a subir em ${fecha}`,
+      sobreValorOriginal:(montoFmt,pct,freqTxt)=>`+${montoFmt} sobre o valor original · sobe ${pct}% a cada ${freqTxt} (limite de 100%)`,
+      freqUnit:(n)=> n===1?'dia':`${n} dias`,
+      historialInteresHeading:(dias,periodos)=>`Histórico de juros · ${dias} ${dias===1?'dia ativo':'dias ativo'} · ${periodos} ${periodos===1?'período cumprido':'períodos cumpridos'}`,
+      mostrandoUltimos:(maxShow,periodos)=>`Mostrando os últimos ${maxShow} de ${periodos} períodos`,
+      acumuladoLbl:'acumulado',
+      deudaSaldadaMsg:'Dívida quitada · o juro parou de subir',
+      generadoEl:'Gerado em', negocioCon:'Negócio com', desdeEl:'Desde', saldoPendienteUpper:'SALDO PENDENTE', pagadoPct:'% pago',
+      diasParaInteresUpper:'DIAS ATÉ O JURO COMEÇAR', interesAcumuladoUpper:'JUROS ACUMULADOS',
+      estadoNegocioCon:(nombre)=>`Status do negócio com ${nombre}`,
+      placeholderMonto:'Ex: 40.000', placeholderDias:'Ex: 20', placeholderPct:'Ex: 1',
+    }
+  };
+  function t(){ return T[LANG]; }
+ 
+  function setLang(lang){
+    LANG = lang;
+    try{ localStorage.setItem(LANG_KEY, lang); }catch(e){}
+    applyTranslations();
+  }
+  function setCurrency(code){
+    CURRENCY = code;
+    try{ localStorage.setItem(CURRENCY_KEY, code); }catch(e){}
+    applyTranslations();
+  }
+  function renderSettingsScreen(){
+    $('langRow').querySelectorAll('.lang-btn').forEach(b=>{
+      b.classList.toggle('active', b.dataset.lang===LANG);
+    });
+    const grid = $('currencyGrid');
+    grid.innerHTML = '';
+    CURRENCIES.forEach(code=>{
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'currency-btn' + (code===CURRENCY ? ' active' : '');
+      btn.textContent = code;
+      btn.onclick = ()=>{ setCurrency(code); renderSettingsScreen(); };
+      grid.appendChild(btn);
+    });
+  }
+  $('langRow').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.lang-btn');
+    if(!btn) return;
+    setLang(btn.dataset.lang);
+    renderSettingsScreen();
+  });
+  $('settingsBtn').onclick = ()=>{ renderSettingsScreen(); showScreen('settingsScreen'); };
+  $('settingsBack').onclick = ()=>{ renderHome(); showScreen('homeScreen'); };
+ 
+  function applyTranslations(){
+    const L = t();
+    $('notesTitle').textContent = L.notesTitle;
+    $('notesTextarea').placeholder = L.notesPlaceholder;
+    $('notesSavedHint').textContent = L.notesSaved;
+    $('settingsTitle').textContent = L.settingsTitle;
+    $('settingsLanguageLabel').textContent = L.settingsLanguage;
+    $('settingsCurrencyLabel').textContent = L.settingsCurrency;
+    $('settingsCurrencyNote').textContent = L.settingsCurrencyNote;
+    $('homeSummaryLabel').textContent = L.homeSummaryLabel;
+    $('globalHistoryBtnLabel').textContent = L.globalHistoryBtnLabel;
+    $('historyBtnLabel').textContent = L.historyBtnLabel;
+    $('summaryLabel').textContent = L.summaryLabel;
+    $('tabTodos').textContent = L.tabTodos;
+    $('tabActivos').textContent = L.tabActivos;
+    $('tabPagados').textContent = L.tabPagados;
+    $('newBusinessTitle').textContent = L.newBusinessTitle;
+    $('newBusinessNameLabel').textContent = L.newBusinessNameLabel;
+    $('newBusinessDateLabel').textContent = L.newBusinessDateLabel;
+    $('newBusinessCreate').textContent = L.newBusinessCreate;
+    $('formTitle').textContent = L.formTitle;
+    $('personNameLabel').textContent = L.personNameLabel;
+    $('formDateLabel').textContent = L.formDateLabel;
+    $('debtValueLabel').textContent = L.debtValueLabel(CURRENCY);
+    $('fValor').placeholder = L.placeholderMonto;
+    $('interesToggleLabel').textContent = L.interesToggleLabel;
+    $('graciaLabel').textContent = L.graciaLabel;
+    $('fGracia').placeholder = L.placeholderDias;
+    $('porcentajeLabel').textContent = L.porcentajeLabel;
+    $('fPorcentaje').placeholder = L.placeholderPct;
+    $('frecuenciaLabel').textContent = L.frecuenciaLabel;
+    $('freqDayOpt').textContent = L.freqDayOpt;
+    $('freq3Opt').textContent = L.freq3Opt;
+    $('freqWeekOpt').textContent = L.freqWeekOpt;
+    $('interesMaxNote').textContent = L.interesMaxNote;
+    $('saveBtn').textContent = L.saveBtn;
+    $('saldoLabel').textContent = L.saldoLabel;
+    $('editValorLabel').textContent = L.editValorLabel;
+    $('editValorInput').placeholder = L.editValorPlaceholder;
+    $('editValorSave').textContent = L.editValorSave;
+    $('lblValorOriginal').textContent = L.lblValorOriginal;
+    $('lblInteresAcumulado').textContent = L.lblInteresAcumulado;
+    $('lblTotalPagar').textContent = L.lblTotalPagar;
+    $('lblAbonado').textContent = L.lblAbonado;
+    $('showAbonoForm').textContent = L.showAbonoForm;
+    $('abonoAmountLabel').textContent = L.abonoAmountLabel(CURRENCY);
+    $('aMonto').placeholder = L.placeholderMonto;
+    $('abonoDateLabel').textContent = L.abonoDateLabel;
+    $('addAbonoBtn').textContent = L.addAbonoBtn;
+    $('shareLabel').textContent = L.shareLabel;
+    $('abonoHistoryLabel').textContent = L.abonoHistoryLabel;
+    if(!deleteArmed) $('deleteBtn').textContent = L.deleteBtn;
+    $('historyTitle').textContent = L.historyTitle;
+    $('globalHistoryTitle').textContent = L.globalHistoryTitle;
+    $('receiptReadyTitle').textContent = L.receiptReadyTitle;
+    $('receiptHintText').textContent = L.receiptHintText;
+    $('imageModalClose').textContent = L.imageModalClose;
+    $('imageDownloadBtn').textContent = L.imageDownloadBtn;
+    document.documentElement.lang = LANG;
+    renderHome();
+    if(currentBusinessId) renderList();
+    if(currentId) renderDetail();
+  }
  
   function getBusiness(id){ return negocios.find(x=>x.id===id); }
   function currentBusiness(){ return getBusiness(currentBusinessId); }
@@ -508,15 +844,35 @@ body{
     const day = String(d.getDate()).padStart(2,'0');
     return `${y}-${m}-${day}`;
   }
-  function fmtCOP(n){ return '$' + Math.round(n).toLocaleString('es-CO'); }
+  function fmtMoney(n){ return CURRENCY + ' ' + Math.round(n).toLocaleString(LOCALE_MAP[LANG]); }
+ 
+  /* ---------------- Formateo de miles en campos de monto ---------------- */
+  function formatMilesInput(input){
+    const cursorFromEnd = input.value.length - input.selectionStart;
+    let raw = input.value.replace(/\D/g,'').replace(/^0+(?=\d)/,'');
+    input.value = raw ? Number(raw).toLocaleString(LOCALE_MAP[LANG]) : '';
+    const pos = Math.max(0, input.value.length - cursorFromEnd);
+    input.setSelectionRange(pos, pos);
+  }
+  function rawNumber(input){
+    return parseFloat(input.value.replace(/\D/g,'')) || 0;
+  }
+  function setMontoValue(input, n){
+    input.value = n || n===0 ? Number(n).toLocaleString(LOCALE_MAP[LANG]) : '';
+  }
+  ['fValor','aMonto','editValorInput'].forEach(id=>{
+    const el = $(id);
+    if(el) el.addEventListener('input', ()=> formatMilesInput(el));
+  });
   function fmtDate(iso){
     const d = new Date(iso+'T00:00:00');
-    return d.toLocaleDateString('es-CO', {day:'numeric', month:'short', year:'numeric'});
+    return d.toLocaleDateString(LOCALE_MAP[LANG], {day:'numeric', month:'short', year:'numeric'});
   }
-  function daysBetween(iso){
+  function daysBetween(iso, untilIso){
     const start = new Date(iso+'T00:00:00');
-    const now = new Date(); now.setHours(0,0,0,0);
-    return Math.floor((now-start)/86400000);
+    const end = untilIso ? new Date(untilIso+'T00:00:00') : new Date();
+    if(!untilIso) end.setHours(0,0,0,0);
+    return Math.floor((end-start)/86400000);
   }
   function addDays(iso, days){
     const d = new Date(iso+'T00:00:00');
@@ -543,6 +899,7 @@ body{
   }
   async function renderReceiptCanvas(n){
     await ensureFonts();
+    const L = t();
     const s = computeStats(n);
     const W=1080, H=1350, pad=80;
     const canvas = document.createElement('canvas');
@@ -562,7 +919,7 @@ body{
  
     y += 80;
     ctx.font='500 30px "Inter"'; ctx.fillStyle='#6E7D72';
-    ctx.fillText('Negocio con', pad, y);
+    ctx.fillText(L.negocioCon, pad, y);
  
     y += 66;
     let nameSize = 62;
@@ -574,15 +931,15 @@ body{
  
     y += 44;
     ctx.font='400 28px "Inter"'; ctx.fillStyle='#6E7D72';
-    ctx.fillText('Desde el ' + fmtDate(n.fecha), pad, y);
+    ctx.fillText(L.desdeEl + ' ' + fmtDate(n.fecha), pad, y);
  
     y += 90;
     ctx.font='600 24px "Inter"'; ctx.fillStyle='#6E7D72';
-    ctx.fillText('SALDO PENDIENTE', pad, y);
+    ctx.fillText(L.saldoPendienteUpper, pad, y);
  
     y += 96;
     let saldoSize = 96;
-    const saldoTxt = fmtCOP(s.saldo);
+    const saldoTxt = fmtMoney(s.saldo);
     ctx.font = `700 ${saldoSize}px "JetBrains Mono"`;
     while(ctx.measureText(saldoTxt).width > (W-2*pad) && saldoSize>44){
       saldoSize -= 4; ctx.font = `700 ${saldoSize}px "JetBrains Mono"`;
@@ -599,7 +956,7 @@ body{
  
     y += 56;
     ctx.font='600 28px "JetBrains Mono"'; ctx.fillStyle='#16A34A'; ctx.textAlign='right';
-    ctx.fillText(Math.round(s.progreso)+'% pagado', W-pad, y);
+    ctx.fillText(Math.round(s.progreso)+L.pagadoPct, W-pad, y);
     ctx.textAlign='left';
  
     y += 70;
@@ -615,24 +972,43 @@ body{
       ctx.textAlign='left';
     }
     y += 16;
-    row('Valor original', fmtCOP(n.valor));
-    if(s.interesMonto>0) row('Interés acumulado', fmtCOP(s.interesMonto)+' ('+Math.round(s.interesPercent)+'%)', '#B45309');
-    row('Total a pagar', fmtCOP(s.total));
-    row('Abonado', fmtCOP(s.abonado), '#16A34A');
+    row(L.lblValorOriginal, fmtMoney(n.valor));
+    if(s.interesMonto>0) row(L.lblInteresAcumulado, fmtMoney(s.interesMonto)+' ('+Math.round(s.interesPercent)+'%)', '#B45309');
+    row(L.lblTotalPagar, fmtMoney(s.total));
+    row(L.lblAbonado, fmtMoney(s.abonado), '#16A34A');
  
     if(n.interes && n.interes.activo){
-      const diasT = Math.max(0, daysBetween(n.fecha));
       const gracia = n.interes.gracia;
       const barW2 = W-pad*2, barH2 = 26;
  
-      if(diasT < gracia){
+      if(s.settled && s.saldo<=0){
+        // Deuda saldada: el interés quedó congelado.
+        y += 66;
+        ctx.font='600 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
+        ctx.fillText(L.interesAcumuladoUpper, pad, y);
+        ctx.font='700 30px "JetBrains Mono"'; ctx.fillStyle='#16A34A'; ctx.textAlign='right';
+        ctx.fillText(Math.round(s.interesPercent)+'%', W-pad, y);
+        ctx.textAlign='left';
+ 
+        y += 34;
+        roundRectPath(ctx, pad, y, barW2, barH2, 13);
+        ctx.fillStyle='#EEF2EC'; ctx.fill();
+        const fillW2s = Math.max(barH2, barW2*(s.interesPercent/100));
+        roundRectPath(ctx, pad, y, fillW2s, barH2, 13);
+        ctx.fillStyle='#16A34A'; ctx.fill();
+ 
+        y += 52;
+        ctx.font='400 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
+        ctx.fillText('✓ ' + L.deudaSaldadaMsg, pad, y);
+ 
+      } else if(s.diasTranscurridos < gracia){
         // Fase de gracia: barra de cuenta regresiva antes de que empiece el interés
-        const pct = Math.min(100, (diasT/Math.max(1,gracia))*100);
-        const faltan = gracia - diasT;
+        const pct = Math.min(100, (s.diasTranscurridos/Math.max(1,gracia))*100);
+        const faltan = gracia - s.diasTranscurridos;
  
         y += 66;
         ctx.font='600 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
-        ctx.fillText('DÍAS PARA QUE EMPIECE EL INTERÉS', pad, y);
+        ctx.fillText(L.diasParaInteresUpper, pad, y);
         ctx.font='700 30px "JetBrains Mono"'; ctx.fillStyle='#B45309'; ctx.textAlign='right';
         ctx.fillText(Math.round(pct)+'%', W-pad, y);
         ctx.textAlign='left';
@@ -646,13 +1022,13 @@ body{
  
         y += 52;
         ctx.font='400 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
-        ctx.fillText(`Faltan ${faltan} ${faltan===1?'día':'días'} · empieza a subir el ${fmtDate(addDays(n.fecha, gracia))}`, pad, y);
+        ctx.fillText(L.faltanDias(faltan, fmtDate(addDays(n.fecha, gracia))), pad, y);
  
       } else {
         // Fase activa: barra de interés acumulado, igual a la del detalle
         y += 66;
         ctx.font='600 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
-        ctx.fillText('INTERÉS ACUMULADO', pad, y);
+        ctx.fillText(L.interesAcumuladoUpper, pad, y);
         ctx.font='700 30px "JetBrains Mono"'; ctx.fillStyle='#B45309'; ctx.textAlign='right';
         ctx.fillText(Math.round(s.interesPercent)+'%', W-pad, y);
         ctx.textAlign='left';
@@ -666,12 +1042,12 @@ body{
  
         y += 52;
         ctx.font='400 26px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
-        ctx.fillText(`${s.diasMora} ${s.diasMora===1?'día':'días'} de mora · sube ${n.interes.porcentaje}% cada ${n.interes.frecuencia===1?'día':n.interes.frecuencia+' días'} (tope 100%)`, pad, y);
+        ctx.fillText(L.receiptMoraLine(s.diasMora, n.interes.porcentaje, L.freqUnit(n.interes.frecuencia)), pad, y);
       }
     }
  
     ctx.font='400 24px "Inter"'; ctx.fillStyle='#6E7D72'; ctx.textAlign='left';
-    ctx.fillText('Generado el ' + fmtDate(todayISO()), pad, H-70);
+    ctx.fillText(L.generadoEl + ' ' + fmtDate(todayISO()), pad, H-70);
     ctx.font='700 26px "Space Grotesk"'; ctx.fillStyle='#16A34A'; ctx.textAlign='right';
     ctx.fillText('Prefi', W-pad, H-70);
     ctx.textAlign='left';
@@ -707,6 +1083,40 @@ body{
     try{ localStorage.setItem(HIST_KEY, JSON.stringify(historialVistos)); }
     catch(e){ console.error('No se pudo guardar', e); }
   }
+ 
+  /* ---------------- NOTAS ---------------- */
+  function loadNotas(){
+    try{ return localStorage.getItem(NOTES_KEY) || ''; }
+    catch(e){ console.error('No se pudo cargar notas', e); return ''; }
+  }
+  function saveNotas(texto){
+    try{ localStorage.setItem(NOTES_KEY, texto); }
+    catch(e){ console.error('No se pudo guardar notas', e); }
+  }
+  let notesSaveTimer = null;
+  function flashNotesSaved(){
+    const hint = $('notesSavedHint');
+    hint.classList.add('show');
+    clearTimeout(hint._h);
+    hint._h = setTimeout(()=> hint.classList.remove('show'), 1200);
+  }
+  $('notesBtn').onclick = ()=>{
+    $('notesTextarea').value = loadNotas();
+    showScreen('notesScreen');
+    $('notesTextarea').focus();
+  };
+  $('notesBack').onclick = ()=>{
+    saveNotas($('notesTextarea').value);
+    renderHome();
+    showScreen('homeScreen');
+  };
+  $('notesTextarea').addEventListener('input', ()=>{
+    clearTimeout(notesSaveTimer);
+    notesSaveTimer = setTimeout(()=>{
+      saveNotas($('notesTextarea').value);
+      flashNotesSaved();
+    }, 500);
+  });
   function showToast(text){
     const t = $('toast');
     t.textContent = text; t.classList.add('show');
@@ -714,47 +1124,70 @@ body{
   }
  
   function showScreen(id){
-    ['homeScreen','listScreen','formScreen','detailScreen','historyScreen','globalHistoryScreen','newBusinessScreen'].forEach(s=>{
+    ['homeScreen','listScreen','formScreen','detailScreen','historyScreen','globalHistoryScreen','newBusinessScreen','notesScreen','settingsScreen'].forEach(s=>{
       $(s).classList.toggle('hidden', s!==id);
     });
   }
  
   /* ---------------- CALC ---------------- */
   function computeStats(n){
-    const abonado = n.abonos.reduce((s,a)=>s+a.monto, 0);
-    let interesPercent = 0, diasMora = 0;
-    if(n.interes && n.interes.activo){
-      const dias = daysBetween(n.fecha);
-      diasMora = Math.max(0, dias - n.interes.gracia);
+    // Calcula el % de interés vigente en una fecha dada (sin congelar).
+    function interesEnFecha(fechaISO){
+      if(!(n.interes && n.interes.activo)) return { interesPercent:0, diasMora:0, diasTranscurridos:0 };
+      const dias = daysBetween(n.fecha, fechaISO);
+      const diasTranscurridos = Math.max(0, dias);
+      const diasMora = Math.max(0, dias - n.interes.gracia);
       const periodos = Math.floor(diasMora / n.interes.frecuencia);
-      interesPercent = Math.min(100, periodos * n.interes.porcentaje);
+      const interesPercent = Math.min(100, periodos * n.interes.porcentaje);
+      return { interesPercent, diasMora, diasTranscurridos };
     }
+ 
+    const abonosOrdenados = [...n.abonos].sort((a,b)=> a.fecha.localeCompare(b.fecha) || (a.id||'').localeCompare(b.id||''));
+    const abonado = abonosOrdenados.reduce((s,a)=>s+a.monto, 0);
+ 
+    // Busca la primera fecha en la que los abonos acumulados alcanzan el total
+    // de esa fecha (valor + interés vigente ese día). Desde ahí, la deuda
+    // queda saldada y el interés deja de subir, sin importar los días que pasen después.
+    let settledDate = null;
+    let cum = 0;
+    for(const a of abonosOrdenados){
+      cum += a.monto;
+      const { interesPercent } = interesEnFecha(a.fecha);
+      const totalEsaFecha = n.valor + n.valor*(interesPercent/100);
+      if(cum >= totalEsaFecha - 0.0001){ settledDate = a.fecha; break; }
+    }
+ 
+    const settled = !!settledDate;
+    const evalDate = settled ? settledDate : todayISO();
+    const { interesPercent, diasMora, diasTranscurridos } = interesEnFecha(evalDate);
+ 
     const interesMonto = n.valor * (interesPercent/100);
     const total = n.valor + interesMonto;
     const saldo = Math.max(0, total - abonado);
     const progreso = total>0 ? Math.min(100, (abonado/total)*100) : 0;
-    return { abonado, interesPercent, interesMonto, total, saldo, progreso, diasMora };
+    return { abonado, interesPercent, interesMonto, total, saldo, progreso, diasMora, diasTranscurridos, settled };
   }
  
   /* ---------------- HOME (negocios) ---------------- */
   let deleteArmedIds = new Set();
   function renderHome(){
+    const L = t();
     const wrap = $('homeWrap');
     const summaryCard = $('homeSummaryCard');
     if(negocios.length===0){
       $('homeScreen').classList.add('welcome-bg');
-      $('newBusinessBtn').textContent = 'Comenzar';
+      $('newBusinessBtn').textContent = L.startBtn;
       summaryCard.classList.add('hidden');
       wrap.className = 'welcome';
       wrap.innerHTML = `
-        <div class="welcome-greet">Bienvenido a</div>
+        <div class="welcome-greet">${L.welcomeGreet}</div>
         <div class="welcome-logo">Pre<span class="accent">fi</span></div>
-        <p>Aquí llevas el control claro de tus negocios y cobros: cuánto te deben, cuánto te han abonado y si hay intereses por mora.</p>
+        <p>${L.welcomeText}</p>
       `;
       return;
     }
     $('homeScreen').classList.remove('welcome-bg');
-    $('newBusinessBtn').textContent = '+ Nuevo negocio';
+    $('newBusinessBtn').textContent = L.newBusinessBtnPlus;
     summaryCard.classList.remove('hidden');
     wrap.className = 'list-wrap';
     wrap.innerHTML = '';
@@ -767,17 +1200,16 @@ body{
       });
     });
     $('homeSummaryCount').textContent = negocios.length;
-    $('homeSummaryPersonas').textContent = `${totalPersonas} persona${totalPersonas===1?'':'s'}`;
-    $('homeSummaryMora').textContent = `${totalMora} en mora`;
+    $('homeSummaryPersonas').textContent = L.personas(totalPersonas);
+    $('homeSummaryMora').textContent = L.enMora(totalMora);
  
     negocios.forEach(b=>{
       const personas = b.personas||[];
-      const totalPendiente = personas.reduce((sum,p)=> sum + computeStats(p).saldo, 0);
       const card = document.createElement('div');
       card.className = 'ncard';
       card.innerHTML = `
         <div class="ncard-top">
-          <div class="ncard-name">${b.nombre}</div>
+          <div class="ncard-name biz-name">${b.nombre}</div>
           <div style="display:flex; align-items:center; gap:8px;">
             <div class="ncard-date">${b.fecha ? fmtDate(b.fecha) : ''}</div>
             <button type="button" class="ncard-delete">
@@ -786,11 +1218,7 @@ body{
           </div>
         </div>
         <div class="ncard-bottom">
-          <span class="amt">${personas.length} persona${personas.length===1?'':'s'}</span>
-          <div class="ncard-bottom-right">
-            <span class="pct">${fmtCOP(totalPendiente)}</span>
-            <span class="ncard-bottom-label">Monto por cobrar</span>
-          </div>
+          <span class="amt">${L.personas(personas.length)}</span>
         </div>
       `;
       card.onclick = ()=> openBusiness(b.id);
@@ -800,7 +1228,7 @@ body{
         if(!deleteArmedIds.has(b.id)){
           deleteArmedIds.add(b.id);
           delBtn.classList.add('danger-armed');
-          showToast('Toca de nuevo para eliminar el negocio');
+          showToast(t().tocaEliminarNegocio);
           setTimeout(()=>{ deleteArmedIds.delete(b.id); delBtn.classList.remove('danger-armed'); }, 3000);
           return;
         }
@@ -808,7 +1236,7 @@ body{
         negocios = negocios.filter(x=>x.id!==b.id);
         await saveNegocios();
         renderHome();
-        showToast('Negocio eliminado');
+        showToast(t().negocioEliminado);
       };
       wrap.appendChild(card);
     });
@@ -824,6 +1252,7 @@ body{
   let listFilter = 'todos';
  
   function renderList(){
+    const L = t();
     const biz = currentBusiness();
     if(!biz) return;
     $('summaryBusinessName').textContent = biz.nombre;
@@ -832,7 +1261,7 @@ body{
     const summaryCard = $('summaryCard');
     const tabs = $('listTabs');
     const historyBtn = $('historyBtn');
-    $('newBtn').textContent = '+ Nueva persona';
+    $('newBtn').textContent = L.newPersonBtnPlus;
     summaryCard.classList.remove('hidden');
     tabs.classList.remove('hidden');
     historyBtn.classList.remove('hidden');
@@ -845,9 +1274,9 @@ body{
     const countActivos = withStats.filter(x=> x.s.saldo>0).length;
     const countMora = withStats.filter(x=> x.s.interesMonto>0).length;
  
-    $('summaryAmount').textContent = fmtCOP(totalPorCobrar);
-    $('summaryActivos').textContent = `${countActivos} activos`;
-    $('summaryMora').textContent = `${countMora} en mora`;
+    $('summaryAmount').textContent = fmtMoney(totalPorCobrar);
+    $('summaryActivos').textContent = L.activos(countActivos);
+    $('summaryMora').textContent = L.enMora(countMora);
  
     tabs.querySelectorAll('.tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.filter===listFilter));
  
@@ -859,8 +1288,8 @@ body{
  
     if(filtered.length===0){
       wrap.innerHTML = personas.length===0
-        ? `<div class="empty-filter">Aún no tienes personas en ${biz.nombre}.<br>Toca "+ Nueva persona" para agregar la primera.</div>`
-        : `<div class="empty-filter">No tienes personas en esta categoría.</div>`;
+        ? `<div class="empty-filter">${L.emptyPersonasBiz(biz.nombre)}</div>`
+        : `<div class="empty-filter">${L.emptyPersonasCategory}</div>`;
       return;
     }
  
@@ -870,17 +1299,17 @@ body{
       const card = document.createElement('div');
       card.className = 'ncard';
       card.innerHTML = `
-        ${s.saldo<=0 ? '<div class="paid-badge">PAGADO</div>' : ''}
+        ${s.saldo<=0 ? `<div class="paid-badge">${L.paidBadge}</div>` : ''}
         <div class="ncard-top">
           <div class="ncard-name"><span class="ncard-dot" style="background:${dotColor};"></span>${n.nombre}</div>
           <div class="ncard-date">${fmtDate(n.fecha)}</div>
         </div>
         <div class="pbar"><div class="pbar-fill" style="width:${s.progreso}%;"></div></div>
         <div class="ncard-bottom">
-          <span class="amt">${fmtCOP(s.abonado)} de ${fmtCOP(s.total)}</span>
+          <span class="amt">${fmtMoney(s.abonado)} ${L.of} ${fmtMoney(s.total)}</span>
           <span class="pct">${Math.round(s.progreso)}%</span>
         </div>
-        ${s.interesMonto>0 ? `<div class="mora-tag">⚠ ${s.diasMora} días de mora · +${fmtCOP(s.interesMonto)} de interés</div>` : ''}
+        ${s.interesMonto>0 ? `<div class="mora-tag"><svg class="mora-tag-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>${L.diasDeMora(s.diasMora, fmtMoney(s.interesMonto))}</div>` : ''}
       `;
       card.onclick = ()=> openDetail(n.id);
       wrap.appendChild(card);
@@ -899,7 +1328,7 @@ body{
   /* ---------------- HISTORIAL POR MES ---------------- */
   function monthLabel(key){
     const d = new Date(key+'-01T00:00:00');
-    const s = d.toLocaleDateString('es-CO', {month:'long', year:'numeric'});
+    const s = d.toLocaleDateString(LOCALE_MAP[LANG], {month:'long', year:'numeric'});
     return s.charAt(0).toUpperCase()+s.slice(1);
   }
   function groupAbonosByMonth(){
@@ -946,10 +1375,11 @@ body{
       .sort((a,b)=> b.key.localeCompare(a.key));
   }
   function renderHistory(){
+    const L = t();
     const list = $('historyList');
     const meses = computeMonthlyHistory();
     if(meses.length===0){
-      list.innerHTML = `<div class="empty-filter">Todavía no tienes movimientos en este negocio.</div>`;
+      list.innerHTML = `<div class="empty-filter">${L.noMovimientosNegocio}</div>`;
       return;
     }
     list.innerHTML = '';
@@ -959,11 +1389,11 @@ body{
       row.innerHTML = `
         <div class="month-row-info">
           <div class="month-row-label">${monthLabel(key)}</div>
-          <div class="month-row-count">${count} abono${count===1?'':'s'}</div>
+          <div class="month-row-count">${L.abonoCount(count)}</div>
         </div>
         <div class="month-row-amounts">
-          <div class="month-row-amt-line cobrado"><span class="lbl">Cobrado</span><span class="val mono">${fmtCOP(total)}</span></div>
-          <div class="month-row-amt-line pendiente"><span class="lbl">Por cobrar</span><span class="val mono">${fmtCOP(pendiente)}</span></div>
+          <div class="month-row-amt-line cobrado"><span class="lbl">${L.cobradoLbl}</span><span class="val mono">${fmtMoney(total)}</span></div>
+          <div class="month-row-amt-line pendiente"><span class="lbl">${L.porCobrarLbl}</span><span class="val mono">${fmtMoney(pendiente)}</span></div>
         </div>
         <button type="button" class="month-row-x" data-month="${key}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -984,7 +1414,7 @@ body{
     historialVistos[key] = Array.from(vistos);
     await saveHistorialVistos();
     renderHistory();
-    showToast('Mes quitado del historial');
+    showToast(t().mesQuitado);
   });
  
   /* ---------------- HISTORIAL DE TODOS LOS NEGOCIOS ---------------- */
@@ -1013,11 +1443,12 @@ body{
     })).sort((a,b)=> b.key.localeCompare(a.key));
   }
   function renderGlobalHistory(){
+    const L = t();
     const list = $('globalHistoryList');
     const meses = computeGlobalMonthlyHistory();
     if(meses.length===0){
       list.className = '';
-      list.innerHTML = `<div class="empty-filter">Todavía no tienes movimientos registrados.</div>`;
+      list.innerHTML = `<div class="empty-filter">${L.noMovimientosGlobal}</div>`;
       return;
     }
     list.className = 'list-wrap';
@@ -1028,11 +1459,11 @@ body{
       row.innerHTML = `
         <div class="month-row-info">
           <div class="month-row-label">${monthLabel(key)}</div>
-          <div class="month-row-count">${personas} persona${personas===1?'':'s'} nueva${personas===1?'':'s'}</div>
+          <div class="month-row-count">${L.personasNuevas(personas)}</div>
         </div>
         <div class="month-row-amounts">
-          <div class="month-row-amt-line cobrado"><span class="lbl">Cobrado</span><span class="val mono">${fmtCOP(cobrado)}</span></div>
-          <div class="month-row-amt-line pendiente"><span class="lbl">Por cobrar</span><span class="val mono">${fmtCOP(pendiente)}</span></div>
+          <div class="month-row-amt-line cobrado"><span class="lbl">${L.cobradoLbl}</span><span class="val mono">${fmtMoney(cobrado)}</span></div>
+          <div class="month-row-amt-line pendiente"><span class="lbl">${L.porCobrarLbl}</span><span class="val mono">${fmtMoney(pendiente)}</span></div>
         </div>
       `;
       list.appendChild(row);
@@ -1061,10 +1492,10 @@ body{
     const biz = currentBusiness();
     if(!biz) return;
     const nombre = $('fName').value.trim();
-    const valor = parseFloat($('fValor').value);
+    const valor = rawNumber($('fValor'));
     const fecha = $('fFecha').value || todayISO();
-    if(!nombre){ showToast('Escribe el nombre de la persona'); return; }
-    if(!valor || valor<=0){ showToast('Escribe un valor válido'); return; }
+    if(!nombre){ showToast(t().escribeNombrePersona); return; }
+    if(!valor || valor<=0){ showToast(t().escribeValorValido); return; }
     const persona = {
       id: Date.now().toString(),
       nombre, valor, fecha,
@@ -1080,7 +1511,7 @@ body{
     await saveNegocios();
     renderList();
     showScreen('listScreen');
-    showToast('Persona guardada');
+    showToast(t().personaGuardada);
   };
  
   /* ---------------- DETAIL ---------------- */
@@ -1095,6 +1526,7 @@ body{
     showScreen('detailScreen');
   }
   function buildInterestHistory(n, s){
+    const L = t();
     const gracia = n.interes.gracia, frecuencia = n.interes.frecuencia, porcentaje = n.interes.porcentaje;
     const periodos = Math.floor(s.diasMora / frecuencia);
     if(periodos<=0) return '';
@@ -1106,40 +1538,49 @@ body{
       const periodDate = addDays(n.fecha, gracia + i*frecuencia);
       const cumPercent = Math.min(100, i*porcentaje);
       const cumMonto = n.valor * (cumPercent/100);
-      rows += `<div class="abono-row"><div><div class="amt mono" style="color:var(--amber);">+${fmtCOP(incremento)}</div><div class="date">${fmtDate(periodDate)} · acumulado ${Math.round(cumPercent*10)/10}% (${fmtCOP(cumMonto)})</div></div></div>`;
+      rows += `<div class="abono-row"><div><div class="amt mono" style="color:var(--amber);">+${fmtMoney(incremento)}</div><div class="date">${fmtDate(periodDate)} · ${L.acumuladoLbl} ${Math.round(cumPercent*10)/10}% (${fmtMoney(cumMonto)})</div></div></div>`;
     }
-    const hiddenNote = periodos>maxShow ? `<div class="interest-sub" style="text-align:center; padding-top:2px;">Mostrando los últimos ${maxShow} de ${periodos} periodos</div>` : '';
+    const hiddenNote = periodos>maxShow ? `<div class="interest-sub" style="text-align:center; padding-top:2px;">${L.mostrandoUltimos(maxShow, periodos)}</div>` : '';
     return `
       <div style="margin-top:2px;">
-        <div style="font-size:12.5px; color:var(--ink-dim); font-weight:600; margin-bottom:8px;">Historial de interés · ${s.diasMora} ${s.diasMora===1?'día activo':'días activo'} · ${periodos} ${periodos===1?'periodo cumplido':'periodos cumplidos'}</div>
+        <div style="font-size:12.5px; color:var(--ink-dim); font-weight:600; margin-bottom:8px;">${L.historialInteresHeading(s.diasMora, periodos)}</div>
         <div class="abono-list">${rows}</div>
         ${hiddenNote}
       </div>`;
   }
   function renderInterestSection(n, s){
+    const L = t();
     const box = $('interestBox');
     if(!n.interes || !n.interes.activo){ box.innerHTML=''; return; }
  
-    const diasT = Math.max(0, daysBetween(n.fecha));
     const gracia = n.interes.gracia;
  
-    if(diasT < gracia){
-      // Fase 1: cuenta regresiva antes de que empiece el interés
-      const pct = Math.min(100, (diasT/Math.max(1,gracia))*100);
-      const faltan = gracia - diasT;
+    if(s.settled && s.saldo<=0){
+      // Deuda saldada: el interés quedó congelado y no sigue subiendo.
       box.innerHTML = `
         <div class="interest-section">
-          <div class="interest-label"><span>Días para que empiece el interés</span><span class="val mono">${Math.round(pct)}%</span></div>
+          <div class="interest-label"><span>${L.interesAcumuladoLbl}</span><span class="val mono">${Math.round(s.interesPercent)}%</span></div>
+          <div class="pbar"><div class="pbar-fill" style="width:${s.interesPercent}%;"></div></div>
+          <div class="interest-sub">✓ ${L.deudaSaldadaMsg}</div>
+        </div>
+        ${buildInterestHistory(n, s)}`;
+    } else if(s.diasTranscurridos < gracia){
+      // Fase 1: cuenta regresiva antes de que empiece el interés
+      const pct = Math.min(100, (s.diasTranscurridos/Math.max(1,gracia))*100);
+      const faltan = gracia - s.diasTranscurridos;
+      box.innerHTML = `
+        <div class="interest-section">
+          <div class="interest-label"><span>${L.diasParaEmpezarInteres}</span><span class="val mono">${Math.round(pct)}%</span></div>
           <div class="pbar"><div class="pbar-fill amber" style="width:${pct}%;"></div></div>
-          <div class="interest-sub">Faltan ${faltan} ${faltan===1?'día':'días'} · el interés empieza a subir el ${fmtDate(addDays(n.fecha, gracia))}</div>
+          <div class="interest-sub">${L.faltanDias(faltan, fmtDate(addDays(n.fecha, gracia)))}</div>
         </div>`;
     } else {
       // Fase 2: el interés ya está activo y subiendo
       box.innerHTML = `
         <div class="interest-section">
-          <div class="interest-label"><span>Interés acumulado</span><span class="val mono">${Math.round(s.interesPercent)}%</span></div>
+          <div class="interest-label"><span>${L.interesAcumuladoLbl}</span><span class="val mono">${Math.round(s.interesPercent)}%</span></div>
           <div class="pbar"><div class="pbar-fill amber" style="width:${s.interesPercent}%;"></div></div>
-          <div class="interest-sub">+${fmtCOP(s.interesMonto)} sobre el valor original · sube ${n.interes.porcentaje}% cada ${n.interes.frecuencia===1?'día':n.interes.frecuencia+' días'} (tope 100%)</div>
+          <div class="interest-sub">${L.sobreValorOriginal(fmtMoney(s.interesMonto), n.interes.porcentaje, L.freqUnit(n.interes.frecuencia))}</div>
         </div>
         ${buildInterestHistory(n, s)}`;
     }
@@ -1151,15 +1592,15 @@ body{
     $('dName').textContent = n.nombre;
     $('dDate').textContent = fmtDate(n.fecha);
     $('shareName').textContent = n.nombre;
-    $('dSaldo').textContent = fmtCOP(s.saldo);
+    $('dSaldo').textContent = fmtMoney(s.saldo);
     $('dBarFill').style.width = s.progreso+'%';
-    $('dValor').textContent = fmtCOP(n.valor);
-    $('dTotal').textContent = fmtCOP(s.total);
-    $('dAbonado').textContent = fmtCOP(s.abonado);
+    $('dValor').textContent = fmtMoney(n.valor);
+    $('dTotal').textContent = fmtMoney(s.total);
+    $('dAbonado').textContent = fmtMoney(s.abonado);
  
     if(s.interesMonto>0){
       $('dInteresRow').style.display='flex';
-      $('dInteres').textContent = fmtCOP(s.interesMonto) + ` (${Math.round(s.interesPercent)}%)`;
+      $('dInteres').textContent = fmtMoney(s.interesMonto) + ` (${Math.round(s.interesPercent)}%)`;
     } else {
       $('dInteresRow').style.display='none';
     }
@@ -1168,12 +1609,12 @@ body{
     const list = $('abonoList');
     list.innerHTML = '';
     if(n.abonos.length===0){
-      list.innerHTML = `<div style="font-size:12.5px; color:var(--ink-dim); text-align:center; padding:10px;">Sin abonos todavía</div>`;
+      list.innerHTML = `<div style="font-size:12.5px; color:var(--ink-dim); text-align:center; padding:10px;">${t().sinAbonos}</div>`;
     } else {
       [...n.abonos].sort((a,b)=> b.fecha.localeCompare(a.fecha)).forEach((a,idx)=>{
         const row = document.createElement('div');
         row.className = 'abono-row';
-        row.innerHTML = `<div><div class="amt mono">${fmtCOP(a.monto)}</div><div class="date">${fmtDate(a.fecha)}</div></div><div class="del" data-id="${a.id}">✕</div>`;
+        row.innerHTML = `<div><div class="amt mono">${fmtMoney(a.monto)}</div><div class="date">${fmtDate(a.fecha)}</div></div><div class="del" data-id="${a.id}">✕</div>`;
         row.querySelector('.del').onclick = async ()=>{
           n.abonos = n.abonos.filter(x=>x.id!==a.id);
           await saveNegocios();
@@ -1188,7 +1629,7 @@ body{
   $('editValorBtn').onclick = ()=>{
     const n = currentBusiness().personas.find(x=>x.id===currentId);
     if(!n) return;
-    $('editValorInput').value = n.valor;
+    setMontoValue($('editValorInput'), n.valor);
     $('editValorForm').classList.remove('hidden');
     $('editValorBtn').classList.add('hidden');
     $('editValorInput').focus();
@@ -1196,14 +1637,14 @@ body{
   $('editValorSave').onclick = async ()=>{
     const n = currentBusiness().personas.find(x=>x.id===currentId);
     if(!n) return;
-    const nuevoValor = parseFloat($('editValorInput').value);
-    if(!nuevoValor || nuevoValor<=0){ showToast('Escribe un monto válido'); return; }
+    const nuevoValor = rawNumber($('editValorInput'));
+    if(!nuevoValor || nuevoValor<=0){ showToast(t().escribeMontoValido); return; }
     n.valor = nuevoValor;
     await saveNegocios();
     $('editValorForm').classList.add('hidden');
     $('editValorBtn').classList.remove('hidden');
     renderDetail();
-    showToast('Monto actualizado');
+    showToast(t().montoActualizado);
   };
   function showImageFallback(dataUrl){
     $('receiptImg').src = dataUrl;
@@ -1214,7 +1655,7 @@ body{
   $('imageModalClose').onclick = ()=> $('imageModal').classList.add('hidden');
   $('shareImgBtn').onclick = async ()=>{
     const n = currentBusiness().personas.find(x=>x.id===currentId);
-    showToast('Generando imagen...');
+    showToast(t().generandoImagen);
     const canvas = await renderReceiptCanvas(n);
     const dataUrl = canvas.toDataURL('image/png');
  
@@ -1223,7 +1664,7 @@ body{
       const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
       const file = new File([blob], `prefi-${slug(n.nombre)}.png`, {type:'image/png'});
       if(navigator.canShare && navigator.canShare({files:[file]})){
-        await navigator.share({ files:[file], title:'Prefi', text:`Estado del negocio con ${n.nombre}` });
+        await navigator.share({ files:[file], title:'Prefi', text:t().estadoNegocioCon(n.nombre) });
         return;
       }
     }catch(e){
@@ -1235,32 +1676,32 @@ body{
   $('showAbonoForm').onclick = ()=>{ $('abonoForm').classList.toggle('hidden'); };
   $('addAbonoBtn').onclick = async ()=>{
     const n = currentBusiness().personas.find(x=>x.id===currentId);
-    const monto = parseFloat($('aMonto').value);
+    const monto = rawNumber($('aMonto'));
     const fecha = $('aFecha').value || todayISO();
-    if(!monto || monto<=0){ showToast('Escribe un monto válido'); return; }
+    if(!monto || monto<=0){ showToast(t().escribeMontoValido); return; }
     n.abonos.push({ id:Date.now().toString(), monto, fecha });
     await saveNegocios();
     $('abonoForm').classList.add('hidden');
     renderDetail();
-    showToast('Abono registrado');
+    showToast(t().abonoRegistrado);
   };
  
   let deleteArmed = false;
   $('deleteBtn').onclick = async ()=>{
     if(!deleteArmed){
       deleteArmed = true;
-      $('deleteBtn').textContent = '¿Confirmar eliminación?';
-      setTimeout(()=>{ deleteArmed=false; $('deleteBtn').textContent='Eliminar persona'; }, 3000);
+      $('deleteBtn').textContent = t().deleteBtnConfirm;
+      setTimeout(()=>{ deleteArmed=false; $('deleteBtn').textContent=t().deleteBtn; }, 3000);
       return;
     }
     const biz = currentBusiness();
     biz.personas = biz.personas.filter(x=>x.id!==currentId);
     await saveNegocios();
     deleteArmed = false;
-    $('deleteBtn').textContent = 'Eliminar persona';
+    $('deleteBtn').textContent = t().deleteBtn;
     renderList();
     showScreen('listScreen');
-    showToast('Persona eliminada');
+    showToast(t().personaEliminada);
   };
  
   /* ---------------- NUEVO NEGOCIO ---------------- */
@@ -1274,14 +1715,15 @@ body{
   $('newBusinessCreate').onclick = async ()=>{
     const nombre = $('newBusinessInput').value.trim();
     const fecha = $('newBusinessFecha').value || todayISO();
-    if(!nombre){ showToast('Escribe un nombre'); return; }
+    if(!nombre){ showToast(t().escribeNombre); return; }
     negocios.push({ id: Date.now().toString(), nombre, fecha, personas: [] });
     await saveNegocios();
     renderHome();
     showScreen('homeScreen');
-    showToast('Negocio creado');
+    showToast(t().negocioCreado);
   };
  
+  applyTranslations();
   loadNegocios().then(renderHome);
 })();
 </script>
