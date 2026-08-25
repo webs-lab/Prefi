@@ -21,6 +21,9 @@
   --green:#16A34A;
   --green-dark:#15803D;
   --green-dim:#D7F5DE;
+  --teal:#65A30D;
+  --teal-dark:#4D7C0F;
+  --teal-dim:#ECFCCB;
   --amber:#B45309;
   --amber-tint:#FEF3C7;
   --red:#DC2626;
@@ -137,35 +140,128 @@ body{
 .welcome-logo .accent{ color:var(--green); }
 .welcome p{ font-size:14px; color:var(--ink-dim); line-height:1.5; max-width:280px; margin:0; }
  
-/* ---------- fondo vivo de bienvenida ---------- */
-.welcome-bg{
-  margin:-20px -18px -26px -18px; padding:20px 18px 26px 18px;
-  background:
-    radial-gradient(circle at 64% 38%, #BEF264 0%, transparent 40%),
-    radial-gradient(circle at 88% 12%, #10B981 0%, transparent 48%),
-    radial-gradient(circle at 80% 85%, #052E1F 0%, transparent 55%),
-    radial-gradient(circle at 10% 82%, #34D399 0%, transparent 46%),
-    linear-gradient(160deg, #064E3B 0%, #052E1F 100%);
-  overflow:hidden;
+/* ---------- hub (inicio) ---------- */
+.hub-wrap{ flex:1; display:flex; flex-direction:column; justify-content:center; gap:14px; }
+.hub-greet{ font-size:15px; color:var(--ink-dim); font-weight:500; text-align:center; margin-bottom:10px; }
+.hub-logo{ font-family:'Space Grotesk',sans-serif; font-size:44px; font-weight:700; letter-spacing:-.02em; text-align:center; margin-bottom:22px; }
+.hub-logo .accent{ color:var(--green); }
+.hub-card{
+  display:flex; align-items:center; gap:14px; text-align:left; width:100%;
+  background:var(--surface); border:1px solid var(--line); border-radius:20px;
+  padding:18px; cursor:pointer; box-shadow:var(--shadow); font-family:'Inter',sans-serif;
 }
-.welcome-bg .topbar{ display:none; }
-.welcome-bg::before, .welcome-bg::after{
-  content:''; position:absolute; border-radius:50%; filter:blur(70px); pointer-events:none;
+.hub-card-icon{
+  width:44px; height:44px; flex:none;
+  display:flex; align-items:center; justify-content:center;
 }
-.welcome-bg::before{ width:230px; height:230px; background:#A3E635; opacity:.5; top:-40px; left:-50px; animation:blobA 16s ease-in-out infinite; }
-.welcome-bg::after{ width:260px; height:260px; background:#059669; opacity:.55; bottom:-70px; right:-50px; animation:blobB 20s ease-in-out infinite; }
-@keyframes blobA{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(26px,34px) scale(1.08); } }
-@keyframes blobB{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(-22px,-30px) scale(1.06); } }
-.welcome-bg .welcome{ position:relative; z-index:1; }
-.welcome-bg .welcome-greet{ color:rgba(255,255,255,.82); animation:fadeUp .6s ease both; }
-.welcome-bg .welcome-logo{ color:#FFFFFF; text-shadow:0 4px 24px rgba(0,0,0,.18); font-size:46px; animation:fadeUp .6s .08s ease both; }
-.welcome-bg .welcome-logo .accent{ color:var(--green); }
-.welcome-bg .welcome p{ color:rgba(255,255,255,.78); animation:fadeUp .6s .16s ease both; }
-@keyframes fadeUp{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
+.hub-card-icon svg{ width:32px; height:32px; }
+.hub-card-icon.negocios{ color:var(--green); }
+.hub-card-icon.cuentas{ color:var(--teal); }
+.hub-card-text{ flex:1; min-width:0; }
+.hub-card-title{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px; }
+.hub-card-sub{ font-size:12.5px; color:var(--ink-dim); margin-top:2px; }
+.hub-card-arrow{ width:18px; height:18px; flex:none; color:var(--ink-dim); }
+ 
+/* ---------- cuentas ---------- */
+.month-nav{ display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:14px; }
+.month-nav-btn{
+  width:34px; height:34px; border-radius:10px; background:var(--surface2); border:none;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink); flex:none;
+}
+.month-nav-btn svg{ width:18px; height:18px; }
+.month-nav-btn:disabled{ opacity:.35; cursor:default; }
+.month-nav-label{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15.5px; text-transform:capitalize; }
+.month-nav-label.current{
+  display:flex; align-items:center; gap:7px; background:var(--surface2); padding:7px 16px; border-radius:100px;
+}
+.month-nav-label.current::before{
+  content:''; width:7px; height:7px; border-radius:50%; background:var(--green); flex:none;
+}
+.summary-card.cuentas-summary{
+  background:linear-gradient(135deg, #16A34A 0%, #064E3B 100%);
+  box-shadow:0 10px 22px rgba(6,78,59,.22);
+}
+.summary-card.cuentas-summary.negative{
+  background:linear-gradient(135deg, #DC2626 0%, #7F1D1D 100%);
+  box-shadow:0 10px 22px rgba(127,29,29,.22);
+}
+#cuentasHomeScreen{ overflow-y:auto; -webkit-overflow-scrolling:touch; }
+#cuentasHomeScreen .list-wrap{ flex:none; overflow-y:visible; }
+#cuentasHomeScreen .fab{ margin-bottom:6px; }
+.chart-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:16px;
+  padding:14px 14px 10px; margin-bottom:14px; box-shadow:var(--shadow);
+}
+.chart-card-title{ font-size:11.5px; color:var(--ink-dim); font-weight:700; text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; }
+.chart-toggle{ display:flex; gap:4px; background:var(--surface2); border-radius:10px; padding:3px; margin-bottom:10px; }
+.chart-toggle-btn{ flex:1; border:none; background:transparent; color:var(--ink-dim); font-family:'Inter',sans-serif; font-size:12px; font-weight:700; padding:6px 0; border-radius:8px; cursor:pointer; }
+.chart-toggle-btn.active{ background:#FFFFFF; color:var(--ink); box-shadow:0 1px 4px rgba(20,32,26,.12); }
+.chart-tooltip{
+  display:flex; align-items:center; justify-content:center; gap:8px; text-align:center;
+  background:var(--surface2); border-radius:10px; padding:9px 10px; margin-bottom:10px;
+  font-size:12.5px; color:var(--ink-dim); font-weight:600; min-height:16px;
+}
+.chart-tooltip .amt{ font-family:'JetBrains Mono',monospace; font-weight:700; }
+.chart-tooltip .amt.ingreso{ color:var(--green); }
+.chart-tooltip .amt.gasto{ color:var(--red); }
+.month-chart-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:16px;
+  padding:14px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:10px;
+}
+.month-chart-header{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.month-chart-title{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; text-transform:capitalize; }
+.month-chart-totals{ display:flex; gap:10px; font-family:'JetBrains Mono',monospace; font-size:11.5px; font-weight:700; flex:none; }
+.month-chart-totals .ingreso{ color:var(--green); }
+.month-chart-totals .gasto{ color:var(--red); }
+.month-chart-list{ display:flex; flex-direction:column; gap:8px; }
+.chart-empty{ text-align:center; color:var(--ink-dim); font-size:13px; padding:24px 8px; }
+.mov-row{
+  display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--line);
+  border-radius:14px; padding:12px 14px; box-shadow:var(--shadow);
+}
+.mov-row-icon{ width:34px; height:34px; border-radius:10px; flex:none; display:flex; align-items:center; justify-content:center; }
+.mov-row-icon svg{ width:16px; height:16px; }
+.mov-row-icon.ingreso{ background:var(--green-dim); color:var(--green-dark); }
+.mov-row-icon.gasto{ background:var(--amber-tint); color:var(--amber); }
+.mov-row-info{ flex:1; min-width:0; }
+.mov-row-desc{ font-weight:600; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.mov-row-date{ font-size:11.5px; color:var(--ink-dim); margin-top:2px; }
+.mov-row-amt{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px; flex:none; }
+.mov-row-amt.ingreso{ color:var(--green); }
+.mov-row-amt.gasto{ color:var(--amber); }
+.mov-row-del{
+  flex:none; width:26px; height:26px; border-radius:50%; border:none; background:var(--surface2);
+  color:var(--ink-dim); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;
+}
+.mov-row-del svg{ width:12px; height:12px; }
+ 
+/* ---------- bienvenida (simple: letras que entran desde la izquierda) ---------- */
+.welcome-greet{ animation:fadeUp .4s ease both; }
+.welcome-logo{ animation:logoPop .6s cubic-bezier(.34,1.56,.64,1) both; }
+.welcome p{ animation:fadeUp .5s .12s ease both; }
+#welcomeScreen .welcome-logo{ animation:none; }
+#welcomeScreen .fab{ animation:fadeUp .35s ease both; animation-delay:.85s; }
+@keyframes fadeUp{ from{ opacity:0; transform:translateY(10px); pointer-events:none; } to{ opacity:1; transform:translateY(0); pointer-events:auto; } }
+@keyframes logoPop{ from{ opacity:0; transform:scale(.7); } to{ opacity:1; transform:scale(1); } }
+ 
+.logo-letter{
+  display:inline-block; opacity:0; transform:translateX(-120px);
+  animation:letterIn .35s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes letterIn{ to{ opacity:1; transform:translateX(0); } }
+ 
+/* ---------- transición simple al entrar a la app ---------- */
+@keyframes welcomeExit{ to{ opacity:0; transform:scale(1.04); } }
+.welcome-exit{ animation:welcomeExit .24s ease forwards; }
+@keyframes screenEnter{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+.screen-enter{ animation:screenEnter .35s ease both; }
+ 
 @media (prefers-reduced-motion: reduce){
-  .welcome-bg::before, .welcome-bg::after{ animation:none; }
-  .welcome-bg .welcome-greet, .welcome-bg .welcome-logo, .welcome-bg .welcome p{ animation:none; }
+  .welcome-greet, .welcome-logo, .welcome p, #welcomeScreen .fab, .welcome-exit, .screen-enter, .logo-letter{
+    animation:none !important; opacity:1 !important; transform:none !important; pointer-events:auto !important;
+  }
 }
+ 
  
 .ncard{
   position:relative; background:var(--surface); border-radius:16px; padding:14px 16px 12px;
@@ -199,12 +295,6 @@ body{
   padding:14px 30px; border-radius:100px; cursor:pointer; box-shadow:0 4px 12px rgba(22,163,74,.28);
 }
 .fab:active{ transform:scale(.97); }
-.welcome-bg .fab{
-  position:relative; z-index:1;
-  background:#FFFFFF; color:#14532D; font-weight:800; font-size:16px;
-  padding:16px 34px; box-shadow:0 10px 28px rgba(0,0,0,.28);
-  animation:fadeUp .6s .24s ease both;
-}
  
 /* ---------- form ---------- */
 .form-screen{ flex:1; display:flex; flex-direction:column; overflow-y:auto; gap:14px; padding-bottom:10px; }
@@ -228,6 +318,7 @@ body{
 .detail-head{ text-align:center; }
 .detail-head .name{ font-size:20px; font-weight:700; }
 .detail-head .date{ font-size:12.5px; color:var(--ink-dim); margin-top:2px; }
+.detail-head .desc{ font-size:13px; color:var(--ink-dim); margin-top:8px; font-style:italic; line-height:1.4; }
 .saldo-num{ text-align:center; font-size:38px; font-weight:700; margin:4px 0; }
 .saldo-lbl{ text-align:center; font-size:12px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:.06em; margin-top:-14px; }
  
@@ -268,6 +359,13 @@ body{
 .interest-label .val{ color:var(--amber); font-weight:700; }
 .pbar-fill.amber{ background:linear-gradient(90deg, #FDE68A, var(--amber)); }
 .interest-sub{ font-size:11.5px; color:var(--ink-dim); line-height:1.4; }
+.interest-more-btn{
+  display:block; width:100%; margin-top:2px;
+  background:var(--surface2); color:var(--ink-dim); border:1px solid var(--line);
+  border-radius:10px; padding:9px; font-size:12.5px; font-weight:700; cursor:pointer;
+  font-family:'Inter',sans-serif;
+}
+.interest-more-btn:active{ transform:scale(.98); }
  
 .abono-form{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow); }
 .abono-list{ display:flex; flex-direction:column; gap:8px; }
@@ -316,6 +414,12 @@ body{
   outline:none;
 }
 .notes-textarea:focus{ border-color:var(--green); }
+.desc-textarea{
+  width:100%; resize:none; background:var(--surface2); border:1px solid var(--line); border-radius:12px;
+  padding:11px 12px; color:var(--ink); font-size:14.5px; font-family:'Inter',sans-serif; line-height:1.5;
+  outline:none;
+}
+.desc-textarea:focus{ border-color:var(--green); }
 .notes-saved-hint{
   align-self:center; font-size:11.5px; color:var(--ink-dim); font-weight:600;
   opacity:0; transition:opacity .3s ease; margin-top:2px;
@@ -343,6 +447,24 @@ body{
 .currency-btn.active{ border-color:var(--green); background:var(--green-dim); color:var(--green-dark); }
 .settings-note{ font-size:11.5px; color:var(--ink-dim); line-height:1.5; }
  
+/* ---------- navegación inferior ---------- */
+.bottom-nav{
+  flex:none; display:flex; align-items:stretch; justify-content:space-between; gap:5px;
+  margin-top:12px; padding:6px;
+  background:var(--surface); border:1px solid var(--line); border-radius:20px;
+  box-shadow:var(--shadow);
+}
+.nav-item{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  border:none; background:transparent; color:var(--ink-dim); cursor:pointer;
+  padding:9px 2px 8px; border-radius:15px; font-family:'Inter',sans-serif;
+}
+.nav-item svg{ width:21px; height:21px; flex:none; }
+.nav-item span{ font-size:10px; font-weight:700; letter-spacing:.01em; }
+.nav-item.active{ color:var(--green-dark); background:var(--green-dim); }
+.nav-item:active{ transform:scale(.96); }
+.icon-btn.tab-root{ visibility:hidden; pointer-events:none; }
+ 
 @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
 </style>
 </head>
@@ -350,18 +472,21 @@ body{
 <div class="app">
   <div class="toast" id="toast"></div>
  
-  <!-- HOME (lista de negocios) -->
-  <div class="list-screen" id="homeScreen">
+  <!-- BIENVENIDA (splash inicial) -->
+  <div class="list-screen" id="welcomeScreen">
+    <div class="welcome">
+      <div class="welcome-greet" id="welcomeGreet">Bienvenido a</div>
+      <div class="welcome-logo" id="welcomeLogo"><span class="logo-letter" style="animation-delay:0ms">P</span><span class="logo-letter" style="animation-delay:110ms">r</span><span class="logo-letter" style="animation-delay:220ms">e</span><span class="logo-letter accent" style="animation-delay:330ms">f</span><span class="logo-letter accent" style="animation-delay:440ms">i</span></div>
+    </div>
+    <button type="button" class="fab" id="welcomeStartBtn">Comenzar</button>
+  </div>
+ 
+  <!-- NEGOCIOS (lista) -->
+  <div class="list-screen hidden" id="homeScreen">
     <div class="topbar">
-      <h1 class="logo">Pre<span class="accent">fi</span></h1>
-      <div style="display:flex; gap:8px;">
-        <button type="button" class="icon-btn" id="notesBtn" aria-label="Notas">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px;"><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"></path><line x1="9" y1="13" x2="15" y2="13"></line><line x1="9" y1="17" x2="13" y2="17"></line></svg>
-        </button>
-        <button type="button" class="icon-btn" id="settingsBtn" aria-label="Ajustes">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg>
-        </button>
-      </div>
+      <div class="icon-btn tab-root" id="businessesBack">←</div>
+      <h1 class="display" id="businessesTitle" style="font-size:19px;">Negocios</h1>
+      <div style="width:38px;"></div>
     </div>
     <div class="summary-card hidden" id="homeSummaryCard">
       <div class="summary-label" id="homeSummaryLabel">TUS NEGOCIOS</div>
@@ -385,16 +510,92 @@ body{
     <button class="fab" id="newBusinessBtn">+ Nuevo negocio</button>
   </div>
  
+  <!-- CUENTAS -->
+  <div class="list-screen hidden" id="cuentasHomeScreen">
+    <div class="topbar">
+      <div class="icon-btn tab-root" id="cuentasBack">←</div>
+      <h1 class="display" id="cuentasTitle" style="font-size:19px;">Cuentas</h1>
+      <button type="button" class="icon-btn" id="cuentasHistoryBtn" aria-label="Historial">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px;"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      </button>
+    </div>
+ 
+    <div class="summary-card cuentas-summary">
+      <div class="summary-label" id="cuentasSaldoLabel">SALDO DEL MES</div>
+      <div class="summary-amount mono" id="cuentasSaldoAmount">$0</div>
+      <div class="summary-pills">
+        <div class="summary-pill">
+          <svg class="summary-pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+          <span id="cuentasIngresosAmount">$0</span>
+        </div>
+        <div class="summary-pill">
+          <svg class="summary-pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+          <span id="cuentasGastosAmount">$0</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="month-nav">
+      <button type="button" class="month-nav-btn" id="cuentasMonthPrev" aria-label="Mes anterior">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
+      </button>
+      <div class="month-nav-label current" id="cuentasMonthLabel">—</div>
+      <button type="button" class="month-nav-btn" id="cuentasMonthNext" aria-label="Mes siguiente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
+      </button>
+    </div>
+ 
+    <div class="chart-card" id="cuentasChartCard">
+      <div class="chart-card-title" id="chartTitle">Evolución del saldo</div>
+      <div class="chart-toggle" id="chartToggle">
+        <button type="button" class="chart-toggle-btn active" data-mode="line" id="chartModeLine">Línea</button>
+        <button type="button" class="chart-toggle-btn" data-mode="bar" id="chartModeBar">Barras</button>
+      </div>
+      <div class="chart-tooltip" id="chartTooltip">Toca o desliza sobre la gráfica</div>
+      <div id="cuentasChartWrap"></div>
+    </div>
+ 
+    <div class="list-wrap" id="cuentasWrap"></div>
+    <button class="fab" id="newMovBtn">+ Nuevo movimiento</button>
+  </div>
+ 
+  <!-- NUEVO MOVIMIENTO -->
+  <div class="form-screen hidden" id="cuentaFormScreen">
+    <div class="topbar"><div class="icon-btn" id="cuentaFormBack">←</div><h1 class="display" id="cuentaFormTitle" style="font-size:19px;">Nuevo movimiento</h1><div style="width:38px;"></div></div>
+ 
+    <div class="tabs" id="movTipoTabs">
+      <button type="button" class="tab-btn active" data-tipo="ingreso" id="tipoIngresoBtn">Ingreso</button>
+      <button type="button" class="tab-btn" data-tipo="gasto" id="tipoGastoBtn">Gasto</button>
+    </div>
+ 
+    <div class="field"><label id="movMontoLabel">Monto (COP)</label><input type="text" inputmode="numeric" id="movMonto" placeholder="Ej: 40.000"></div>
+    <div class="field"><label id="movDescripcionLabel">Descripción</label><textarea id="movDescripcion" class="desc-textarea" rows="2" placeholder="Ej: Pago de arriendo"></textarea></div>
+    <div class="field"><label id="movFechaLabel">Fecha</label><input type="date" id="movFecha"></div>
+ 
+    <div style="flex:1;"></div>
+    <button class="btn" id="saveMovBtn">Guardar movimiento</button>
+  </div>
+ 
+  <!-- HISTORIAL DE CUENTAS -->
+  <div class="list-screen hidden" id="cuentasHistoryScreen">
+    <div class="topbar"><div class="icon-btn" id="cuentasHistoryBack">←</div><h1 class="display" id="cuentasHistoryTitle" style="font-size:19px;">Historial</h1><div style="width:38px;"></div></div>
+    <div class="chart-toggle" id="historyChartToggle">
+      <button type="button" class="chart-toggle-btn active" data-mode="line" id="historyChartModeLine">Línea</button>
+      <button type="button" class="chart-toggle-btn" data-mode="bar" id="historyChartModeBar">Barras</button>
+    </div>
+    <div class="list-wrap" id="cuentasHistoryWrap"></div>
+  </div>
+ 
   <!-- NOTAS -->
   <div class="form-screen hidden" id="notesScreen">
-    <div class="topbar"><div class="icon-btn" id="notesBack">←</div><h1 class="display" id="notesTitle" style="font-size:19px;">Notas</h1><div style="width:38px;"></div></div>
+    <div class="topbar"><div class="icon-btn tab-root" id="notesBack">←</div><h1 class="display" id="notesTitle" style="font-size:19px;">Notas</h1><div style="width:38px;"></div></div>
     <textarea id="notesTextarea" class="notes-textarea" placeholder="Escribe aquí lo que quieras recordar: acuerdos, pendientes, recordatorios..."></textarea>
     <div class="notes-saved-hint" id="notesSavedHint">Guardado</div>
   </div>
  
   <!-- AJUSTES -->
   <div class="form-screen hidden" id="settingsScreen">
-    <div class="topbar"><div class="icon-btn" id="settingsBack">←</div><h1 class="display" id="settingsTitle" style="font-size:19px;">Ajustes</h1><div style="width:38px;"></div></div>
+    <div class="topbar"><div class="icon-btn tab-root" id="settingsBack">←</div><h1 class="display" id="settingsTitle" style="font-size:19px;">Ajustes</h1><div style="width:38px;"></div></div>
  
     <div class="settings-section">
       <div class="settings-section-title" id="settingsLanguageLabel">Idioma</div>
@@ -465,6 +666,7 @@ body{
     <div class="field"><label id="personNameLabel">Nombre de la persona</label><input type="text" id="fName"></div>
     <div class="field"><label id="debtValueLabel">Valor de la deuda (COP)</label><input type="text" inputmode="numeric" id="fValor" placeholder="Ej: 40.000"></div>
     <div class="field"><label id="formDateLabel">Fecha</label><input type="date" id="fFecha"></div>
+    <div class="field"><label id="descripcionLabel">Descripción</label><textarea id="fDescripcion" class="desc-textarea" rows="2" placeholder="Ej: Le presté para..."></textarea></div>
  
     <div class="toggle-row">
       <span style="font-size:14px; font-weight:600;" id="interesToggleLabel">Cobrar interés por mora</span>
@@ -496,6 +698,7 @@ body{
     <div class="detail-head">
       <div class="name" id="dName"></div>
       <div class="date" id="dDate"></div>
+      <div class="desc hidden" id="dDescripcion"></div>
     </div>
     <div class="saldo-num mono" id="dSaldo"></div>
     <div class="saldo-lbl" id="saldoLabel">Saldo pendiente</div>
@@ -550,6 +753,26 @@ body{
     <div id="globalHistoryList"></div>
   </div>
  
+  <!-- NAVEGACIÓN INFERIOR -->
+  <div class="bottom-nav hidden" id="bottomNav">
+    <button type="button" class="nav-item" data-tab="negocios">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span id="navLabelNegocios">Negocios</span>
+    </button>
+    <button type="button" class="nav-item" data-tab="cuentas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+      <span id="navLabelCuentas">Cuentas</span>
+    </button>
+    <button type="button" class="nav-item" data-tab="notas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"></path><line x1="9" y1="13" x2="15" y2="13"></line><line x1="9" y1="17" x2="13" y2="17"></line></svg>
+      <span id="navLabelNotas">Notas</span>
+    </button>
+    <button type="button" class="nav-item" data-tab="ajustes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg>
+      <span id="navLabelAjustes">Ajustes</span>
+    </button>
+  </div>
+ 
   <!-- Imagen del comprobante generada + respaldo para guardar/compartir -->
   <div class="modal-overlay hidden" id="imageModal">
     <div class="modal-card">
@@ -569,10 +792,13 @@ body{
   const STORAGE_KEY = 'fiado:negocios';
   const HIST_KEY = 'fiado:historial-vistos-v2';
   const NOTES_KEY = 'fiado:notas';
+  const CUENTAS_KEY = 'fiado:cuentas';
   let negocios = [];
   let historialVistos = {};
   let currentBusinessId = null;
   let currentId = null;
+  let cuentas = [];
+  let cuentasMonthKey = '';
   const $ = id => document.getElementById(id);
  
   /* ---------------- IDIOMA Y MONEDA ---------------- */
@@ -628,12 +854,28 @@ body{
       freqUnit:(n)=> n===1?'día':`${n} días`,
       historialInteresHeading:(dias,periodos)=>`Historial de interés · ${dias} ${dias===1?'día activo':'días activo'} · ${periodos} ${periodos===1?'periodo cumplido':'periodos cumplidos'}`,
       mostrandoUltimos:(maxShow,periodos)=>`Mostrando los últimos ${maxShow} de ${periodos} periodos`,
+      mostrarMasDias:(n)=>`Mostrar ${n} más`,
+      mostrarMenosDias:'Mostrar menos',
       acumuladoLbl:'acumulado',
       deudaSaldadaMsg:'Deuda saldada · el interés dejó de subir',
       generadoEl:'Generado el', negocioCon:'Negocio con', desdeEl:'Desde el', saldoPendienteUpper:'SALDO PENDIENTE', pagadoPct:'% pagado',
       diasParaInteresUpper:'DÍAS PARA QUE EMPIECE EL INTERÉS', interesAcumuladoUpper:'INTERÉS ACUMULADO',
       estadoNegocioCon:(nombre)=>`Estado del negocio con ${nombre}`,
       placeholderMonto:'Ej: 40.000', placeholderDias:'Ej: 20', placeholderPct:'Ej: 1',
+      descripcionBtn:'Descripción', descripcionPlaceholder:'Ej: Le presté para...',
+      hubGreet:'Bienvenido a Prefi', hubBusinessesTitle:'Negocios', hubBusinessesSub:'Lleva el control de lo que te deben',
+      appWelcomeText:'Lleva el control claro de tus negocios, cobros e ingresos, todo en un solo lugar.',
+      hubCuentasTitle:'Cuentas', hubCuentasSub:'Registra tus ingresos y gastos', businessesTitle:'Negocios',
+      cuentasTitle:'Cuentas', cuentasSaldoLabel:'SALDO DEL MES',
+      ingresoLbl:'Ingreso', gastoLbl:'Gasto',
+      chartTitle:'Evolución del saldo', chartEmpty:'Aún no tienes movimientos este mes',
+      chartModeLine:'Línea', chartModeBar:'Barras',
+      chartTooltipHint:'Toca o desliza sobre la gráfica', cuentasHistoryTitle:'Historial',
+      newMovBtn:'+ Nuevo movimiento', cuentaFormTitle:'Nuevo movimiento',
+      tipoIngresoBtn:'Ingreso', tipoGastoBtn:'Gasto',
+      movMontoLabel:(c)=>`Monto (${c})`, movDescripcionLabel:'Descripción', movDescripcionPlaceholder:'Ej: Pago de arriendo',
+      movFechaLabel:'Fecha', saveMovBtn:'Guardar movimiento',
+      escribeDescripcionMov:'Escribe una descripción', movimientoGuardado:'Movimiento guardado', movimientoEliminado:'Movimiento eliminado',
     },
     en: {
       notesTitle:'Notes', notesPlaceholder:'Write here what you want to remember: agreements, pending items, reminders...', notesSaved:'Saved',
@@ -677,12 +919,28 @@ body{
       freqUnit:(n)=> n===1?'day':`${n} days`,
       historialInteresHeading:(dias,periodos)=>`Interest history · ${dias} ${dias===1?'day active':'days active'} · ${periodos} ${periodos===1?'period completed':'periods completed'}`,
       mostrandoUltimos:(maxShow,periodos)=>`Showing the last ${maxShow} of ${periodos} periods`,
+      mostrarMasDias:(n)=>`Show ${n} more`,
+      mostrarMenosDias:'Show less',
       acumuladoLbl:'accrued',
       deudaSaldadaMsg:'Debt settled · interest has stopped increasing',
       generadoEl:'Generated on', negocioCon:'Business with', desdeEl:'Since', saldoPendienteUpper:'OUTSTANDING BALANCE', pagadoPct:'% paid',
       diasParaInteresUpper:'DAYS UNTIL INTEREST STARTS', interesAcumuladoUpper:'ACCRUED INTEREST',
       estadoNegocioCon:(nombre)=>`Business status with ${nombre}`,
       placeholderMonto:'e.g. 40,000', placeholderDias:'e.g. 20', placeholderPct:'e.g. 1',
+      descripcionBtn:'Description', descripcionPlaceholder:'e.g. I lent this for...',
+      hubGreet:'Welcome to Prefi', hubBusinessesTitle:'Businesses', hubBusinessesSub:'Keep track of what people owe you',
+      appWelcomeText:'Keep clear track of your businesses, collections, and income \u2014 all in one place.',
+      hubCuentasTitle:'Accounts', hubCuentasSub:'Track your income and expenses', businessesTitle:'Businesses',
+      cuentasTitle:'Accounts', cuentasSaldoLabel:'BALANCE THIS MONTH',
+      ingresoLbl:'Income', gastoLbl:'Expense',
+      chartTitle:'Balance over time', chartEmpty:'You don\u2019t have any activity this month yet',
+      chartModeLine:'Line', chartModeBar:'Bars',
+      chartTooltipHint:'Tap or drag over the chart', cuentasHistoryTitle:'History',
+      newMovBtn:'+ New transaction', cuentaFormTitle:'New transaction',
+      tipoIngresoBtn:'Income', tipoGastoBtn:'Expense',
+      movMontoLabel:(c)=>`Amount (${c})`, movDescripcionLabel:'Description', movDescripcionPlaceholder:'e.g. Rent payment',
+      movFechaLabel:'Date', saveMovBtn:'Save transaction',
+      escribeDescripcionMov:'Enter a description', movimientoGuardado:'Transaction saved', movimientoEliminado:'Transaction deleted',
     },
     pt: {
       notesTitle:'Notas', notesPlaceholder:'Escreva aqui o que você quiser lembrar: acordos, pendências, lembretes...', notesSaved:'Salvo',
@@ -726,12 +984,28 @@ body{
       freqUnit:(n)=> n===1?'dia':`${n} dias`,
       historialInteresHeading:(dias,periodos)=>`Histórico de juros · ${dias} ${dias===1?'dia ativo':'dias ativo'} · ${periodos} ${periodos===1?'período cumprido':'períodos cumpridos'}`,
       mostrandoUltimos:(maxShow,periodos)=>`Mostrando os últimos ${maxShow} de ${periodos} períodos`,
+      mostrarMasDias:(n)=>`Mostrar mais ${n}`,
+      mostrarMenosDias:'Mostrar menos',
       acumuladoLbl:'acumulado',
       deudaSaldadaMsg:'Dívida quitada · o juro parou de subir',
       generadoEl:'Gerado em', negocioCon:'Negócio com', desdeEl:'Desde', saldoPendienteUpper:'SALDO PENDENTE', pagadoPct:'% pago',
       diasParaInteresUpper:'DIAS ATÉ O JURO COMEÇAR', interesAcumuladoUpper:'JUROS ACUMULADOS',
       estadoNegocioCon:(nombre)=>`Status do negócio com ${nombre}`,
       placeholderMonto:'Ex: 40.000', placeholderDias:'Ex: 20', placeholderPct:'Ex: 1',
+      descripcionBtn:'Descrição', descripcionPlaceholder:'Ex: Emprestei para...',
+      hubGreet:'Bem-vindo ao Prefi', hubBusinessesTitle:'Negócios', hubBusinessesSub:'Controle o que devem a você',
+      appWelcomeText:'Tenha o controle claro dos seus negócios, cobranças e receitas, tudo em um só lugar.',
+      hubCuentasTitle:'Contas', hubCuentasSub:'Registre suas receitas e despesas', businessesTitle:'Negócios',
+      cuentasTitle:'Contas', cuentasSaldoLabel:'SALDO DO MÊS',
+      ingresoLbl:'Receita', gastoLbl:'Despesa',
+      chartTitle:'Evolução do saldo', chartEmpty:'Você ainda não tem movimentações este mês',
+      chartModeLine:'Linha', chartModeBar:'Barras',
+      chartTooltipHint:'Toque ou deslize sobre o gráfico', cuentasHistoryTitle:'Histórico',
+      newMovBtn:'+ Nova transação', cuentaFormTitle:'Nova transação',
+      tipoIngresoBtn:'Receita', tipoGastoBtn:'Despesa',
+      movMontoLabel:(c)=>`Valor (${c})`, movDescripcionLabel:'Descrição', movDescripcionPlaceholder:'Ex: Pagamento do aluguel',
+      movFechaLabel:'Data', saveMovBtn:'Salvar transação',
+      escribeDescripcionMov:'Digite uma descrição', movimientoGuardado:'Transação salva', movimientoEliminado:'Transação excluída',
     }
   };
   function t(){ return T[LANG]; }
@@ -767,8 +1041,7 @@ body{
     setLang(btn.dataset.lang);
     renderSettingsScreen();
   });
-  $('settingsBtn').onclick = ()=>{ renderSettingsScreen(); showScreen('settingsScreen'); };
-  $('settingsBack').onclick = ()=>{ renderHome(); showScreen('homeScreen'); };
+  $('settingsBack').onclick = ()=> showScreen('settingsScreen');
  
   function applyTranslations(){
     const L = t();
@@ -795,6 +1068,8 @@ body{
     $('formDateLabel').textContent = L.formDateLabel;
     $('debtValueLabel').textContent = L.debtValueLabel(CURRENCY);
     $('fValor').placeholder = L.placeholderMonto;
+    $('descripcionLabel').textContent = L.descripcionBtn;
+    $('fDescripcion').placeholder = L.descripcionPlaceholder;
     $('interesToggleLabel').textContent = L.interesToggleLabel;
     $('graciaLabel').textContent = L.graciaLabel;
     $('fGracia').placeholder = L.placeholderDias;
@@ -828,10 +1103,37 @@ body{
     $('receiptHintText').textContent = L.receiptHintText;
     $('imageModalClose').textContent = L.imageModalClose;
     $('imageDownloadBtn').textContent = L.imageDownloadBtn;
+    $('welcomeGreet').textContent = L.welcomeGreet;
+    $('welcomeStartBtn').textContent = L.startBtn;
+    $('navLabelNegocios').textContent = L.businessesTitle;
+    $('navLabelCuentas').textContent = L.cuentasTitle;
+    $('navLabelNotas').textContent = L.notesTitle;
+    $('navLabelAjustes').textContent = L.settingsTitle;
+    $('businessesTitle').textContent = L.businessesTitle;
+    $('cuentasTitle').textContent = L.cuentasTitle;
+    $('cuentasSaldoLabel').textContent = L.cuentasSaldoLabel;
+    $('chartTitle').textContent = L.chartTitle;
+    $('chartModeLine').textContent = L.chartModeLine;
+    $('chartModeBar').textContent = L.chartModeBar;
+    $('cuentasHistoryTitle').textContent = L.cuentasHistoryTitle;
+    $('historyChartModeLine').textContent = L.chartModeLine;
+    $('historyChartModeBar').textContent = L.chartModeBar;
+    $('newMovBtn').textContent = L.newMovBtn;
+    $('cuentaFormTitle').textContent = L.cuentaFormTitle;
+    $('tipoIngresoBtn').textContent = L.tipoIngresoBtn;
+    $('tipoGastoBtn').textContent = L.tipoGastoBtn;
+    $('movMontoLabel').textContent = L.movMontoLabel(CURRENCY);
+    $('movMonto').placeholder = L.placeholderMonto;
+    $('movDescripcionLabel').textContent = L.movDescripcionLabel;
+    $('movDescripcion').placeholder = L.movDescripcionPlaceholder;
+    $('movFechaLabel').textContent = L.movFechaLabel;
+    $('saveMovBtn').textContent = L.saveMovBtn;
     document.documentElement.lang = LANG;
     renderHome();
     if(currentBusinessId) renderList();
     if(currentId) renderDetail();
+    if(cuentasMonthKey) renderCuentasHome();
+    if(!$('cuentasHistoryScreen').classList.contains('hidden')) renderCuentasHistory();
   }
  
   function getBusiness(id){ return negocios.find(x=>x.id===id); }
@@ -1084,6 +1386,353 @@ body{
     catch(e){ console.error('No se pudo guardar', e); }
   }
  
+  /* ---------------- CUENTAS (ingresos y gastos) ---------------- */
+  async function loadCuentas(){
+    try{
+      const raw = localStorage.getItem(CUENTAS_KEY);
+      if(raw) cuentas = JSON.parse(raw) || [];
+    }catch(e){ console.error('No se pudo cargar cuentas', e); }
+  }
+  async function saveCuentas(){
+    try{ localStorage.setItem(CUENTAS_KEY, JSON.stringify(cuentas)); }
+    catch(e){ console.error('No se pudo guardar cuentas', e); }
+  }
+  function addMonths(key, delta){
+    const [y,m] = key.split('-').map(Number);
+    const d = new Date(y, m-1+delta, 1);
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  }
+  function movimientosDelMes(key){
+    return cuentas.filter(m=> m.fecha.slice(0,7)===key);
+  }
+  const DOW = {
+    es:['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],
+    en:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    pt:['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']
+  };
+  function dayOfWeekLabel(iso){
+    const d = new Date(iso+'T00:00:00');
+    return DOW[LANG][d.getDay()];
+  }
+  function fmtCompact(n){
+    const sign = n<0 ? '-' : '';
+    const abs = Math.abs(n);
+    if(abs>=1000000) return sign + (abs/1000000).toFixed(abs%1000000===0?0:1) + 'M';
+    if(abs>=1000) return sign + Math.round(abs/1000) + 'k';
+    return sign + Math.round(abs);
+  }
+  let chartMode = 'line';
+  try{ chartMode = localStorage.getItem('fiado:chart-mode') || 'line'; }catch(e){}
+  function syncChartToggleUI(){
+    $('chartModeLine').classList.toggle('active', chartMode==='line');
+    $('chartModeBar').classList.toggle('active', chartMode==='bar');
+    $('historyChartModeLine').classList.toggle('active', chartMode==='line');
+    $('historyChartModeBar').classList.toggle('active', chartMode==='bar');
+  }
+  $('chartToggle').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.chart-toggle-btn');
+    if(!btn) return;
+    chartMode = btn.dataset.mode;
+    try{ localStorage.setItem('fiado:chart-mode', chartMode); }catch(err){}
+    syncChartToggleUI();
+    renderCuentasHome();
+  });
+  $('historyChartToggle').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.chart-toggle-btn');
+    if(!btn) return;
+    chartMode = btn.dataset.mode;
+    try{ localStorage.setItem('fiado:chart-mode', chartMode); }catch(err){}
+    syncChartToggleUI();
+    renderCuentasHistory();
+  });
+  function buildChartMarkup(movs, opts){
+    opts = opts || {};
+    const W = opts.width || 320, H = opts.height || 176;
+    const showAxis = opts.showAxis !== false;
+    const interactive = !!opts.interactive;
+    const padL = showAxis ? 40 : 6, padR = 8, padT = 12, padB = showAxis ? 24 : 6;
+ 
+    if(movs.length===0){
+      return { html:`<div class="chart-empty">${t().chartEmpty}</div>`, data:null };
+    }
+    const ordered = [...movs].sort((a,b)=> a.fecha.localeCompare(b.fecha) || a.id.localeCompare(b.id));
+    let cum = 0;
+    const points = [{x:0, y:0, tipo:null, fecha:null, monto:0, descripcion:''}];
+    ordered.forEach(m=>{
+      cum += (m.tipo==='ingreso' ? m.monto : -m.monto);
+      points.push({x:points.length, y:cum, tipo:m.tipo, fecha:m.fecha, monto:m.monto, descripcion:m.descripcion});
+    });
+ 
+    const ys = points.map(p=>p.y);
+    const minY = Math.min(0, ...ys), maxY = Math.max(0, ...ys);
+    const rangeY = (maxY-minY) || 1;
+    const n = points.length;
+    const plotW = W-padL-padR;
+    const stepX = n>1 ? plotW/(n-1) : 0;
+    const sx = (i)=> padL + stepX*i;
+    const sy = (v)=> padT + (H-padT-padB) * (1 - (v-minY)/rangeY);
+    const zeroY = sy(0);
+ 
+    let yAxisMarkup;
+    if(showAxis){
+      const rawTicks = [maxY, minY];
+      if(minY < 0) rawTicks.push(0);
+      const yTicks = [...new Set(rawTicks.map(v=>Math.round(v)))];
+      yAxisMarkup = yTicks.map(v=> `
+        <text x="${(padL-6).toFixed(1)}" y="${(sy(v)+3).toFixed(1)}" text-anchor="end" font-size="9" fill="var(--ink-dim)" font-family="'JetBrains Mono',monospace">${fmtCompact(v)}</text>
+        <line x1="${padL}" y1="${sy(v).toFixed(1)}" x2="${W-padR}" y2="${sy(v).toFixed(1)}" stroke="var(--line)" stroke-width="1" stroke-dasharray="${v===0?'0':'3 3'}"></line>
+      `).join('');
+    } else {
+      yAxisMarkup = `<line x1="${padL}" y1="${zeroY.toFixed(1)}" x2="${W-padR}" y2="${zeroY.toFixed(1)}" stroke="var(--line)" stroke-width="1" stroke-dasharray="3 3"></line>`;
+    }
+ 
+    let xAxisMarkup = '';
+    if(showAxis){
+      const maxLabels = Math.max(1, Math.floor(plotW/22));
+      const labelStep = Math.max(1, Math.ceil((n-1)/maxLabels));
+      xAxisMarkup = points.slice(1).map((p,i)=>{
+        const idx = i+1;
+        if(i % labelStep !== 0 && idx !== n-1) return '';
+        return `<text x="${sx(idx).toFixed(1)}" y="${H-6}" text-anchor="middle" font-size="9" fill="var(--ink-dim)" font-family="'Inter',sans-serif">${dayOfWeekLabel(p.fecha)}</text>`;
+      }).join('');
+    }
+ 
+    let bodyMarkup = '';
+    if(opts.mode==='bar'){
+      const barW = Math.max(showAxis?4:3, Math.min(18, stepX*0.55));
+      bodyMarkup = points.slice(1).map((p,i)=>{
+        const idx = i+1;
+        const x = sx(idx) - barW/2;
+        const yTop = Math.min(sy(p.y), zeroY);
+        const h = Math.max(1, Math.abs(sy(p.y)-zeroY));
+        const color = p.tipo==='ingreso' ? 'var(--green)' : 'var(--red)';
+        const dataAttr = interactive ? ` data-idx="${idx}"` : '';
+        return `<rect${dataAttr} x="${x.toFixed(1)}" y="${yTop.toFixed(1)}" width="${barW.toFixed(1)}" height="${h.toFixed(1)}" rx="3" fill="${color}"></rect>`;
+      }).join('');
+    } else {
+      const segments = [];
+      for(let i=1;i<points.length;i++){
+        const color = points[i].tipo==='ingreso' ? 'var(--green)' : 'var(--red)';
+        segments.push(`<line x1="${sx(i-1).toFixed(1)}" y1="${sy(points[i-1].y).toFixed(1)}" x2="${sx(i).toFixed(1)}" y2="${sy(points[i].y).toFixed(1)}" stroke="${color}" stroke-width="2.4" stroke-linecap="round"></line>`);
+      }
+      const dots = points.slice(1).map((p,i)=>{
+        const idx = i+1;
+        const color = p.tipo==='ingreso' ? 'var(--green)' : 'var(--red)';
+        const dataAttr = interactive ? ` data-idx="${idx}"` : '';
+        const r = interactive ? 3 : 2.2;
+        return `<circle${dataAttr} cx="${sx(idx).toFixed(1)}" cy="${sy(p.y).toFixed(1)}" r="${r}" fill="${color}"></circle>`;
+      }).join('');
+      bodyMarkup = segments.join('') + dots;
+    }
+ 
+    let cursorMarkup = '';
+    if(interactive){
+      cursorMarkup = `
+        <line id="chartCursorLine" x1="0" y1="${padT}" x2="0" y2="${H-padB}" stroke="var(--ink-dim)" stroke-width="1" opacity="0"></line>
+        <circle id="chartCursorDot" cx="0" cy="0" r="5.5" fill="#FFFFFF" stroke="var(--ink)" stroke-width="2" opacity="0"></circle>
+      `;
+    }
+ 
+    const html = `
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%; height:${H}px; display:block; touch-action:pan-y;">
+        ${yAxisMarkup}
+        ${bodyMarkup}
+        ${xAxisMarkup}
+        ${cursorMarkup}
+      </svg>`;
+ 
+    return { html, data:{ points, sx, sy, W, H } };
+  }
+ 
+  let currentChartData = null;
+  function resetChartTooltip(hasData){
+    $('chartTooltip').textContent = hasData ? t().chartTooltipHint : '';
+  }
+  function formatChartTooltip(p){
+    const isIngreso = p.tipo==='ingreso';
+    const sign = isIngreso ? '+' : '-';
+    const cls = isIngreso ? 'ingreso' : 'gasto';
+    return `<span>${dayOfWeekLabel(p.fecha)} ${fmtDate(p.fecha)}</span><span class="amt ${cls}">${sign}${fmtMoney(p.monto)}</span>`;
+  }
+  function updateChartCursor(clientX){
+    if(!currentChartData) return;
+    const svg = $('cuentasChartWrap').querySelector('svg');
+    if(!svg) return;
+    const rect = svg.getBoundingClientRect();
+    if(rect.width===0) return;
+    const { points, sx, sy, W } = currentChartData;
+    const svgX = (clientX - rect.left) / rect.width * W;
+    let bestI = 1, bestD = Infinity;
+    for(let i=1;i<points.length;i++){
+      const d = Math.abs(sx(i)-svgX);
+      if(d<bestD){ bestD = d; bestI = i; }
+    }
+    const p = points[bestI];
+    if(!p || p.tipo===null) return;
+    const px = sx(bestI), py = sy(p.y);
+    const cursorLine = svg.querySelector('#chartCursorLine');
+    const cursorDot = svg.querySelector('#chartCursorDot');
+    if(cursorLine){ cursorLine.setAttribute('x1',px); cursorLine.setAttribute('x2',px); cursorLine.setAttribute('opacity','1'); }
+    if(cursorDot){
+      cursorDot.setAttribute('cx',px); cursorDot.setAttribute('cy',py); cursorDot.setAttribute('opacity','1');
+      cursorDot.setAttribute('stroke', p.tipo==='ingreso' ? 'var(--green)' : 'var(--red)');
+    }
+    $('chartTooltip').innerHTML = formatChartTooltip(p);
+  }
+  $('cuentasChartWrap').addEventListener('pointerdown', (e)=> updateChartCursor(e.clientX));
+  $('cuentasChartWrap').addEventListener('pointermove', (e)=> updateChartCursor(e.clientX));
+ 
+  function renderCuentasChart(movs){
+    const wrap = $('cuentasChartWrap');
+    syncChartToggleUI();
+    const built = buildChartMarkup(movs, { width:320, height:176, showAxis:true, interactive:true, mode:chartMode });
+    wrap.innerHTML = built.html;
+    currentChartData = built.data;
+    resetChartTooltip(!!built.data);
+  }
+  function buildMovRowHTML(m, opts){
+    const isIngreso = m.tipo==='ingreso';
+    const deletable = opts && opts.deletable;
+    const delBtn = deletable ? `
+        <button type="button" class="mov-row-del" data-id="${m.id}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>` : '';
+    return `
+      <div class="mov-row">
+        <div class="mov-row-icon ${m.tipo}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${isIngreso ? '<line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline>' : '<line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline>'}</svg>
+        </div>
+        <div class="mov-row-info">
+          <div class="mov-row-desc">${m.descripcion}</div>
+          <div class="mov-row-date">${fmtDate(m.fecha)}</div>
+        </div>
+        <div class="mov-row-amt ${m.tipo}">${isIngreso?'+':'-'}${fmtMoney(m.monto)}</div>${delBtn}
+      </div>`;
+  }
+  function renderCuentasHome(){
+    const L = t();
+    if(!cuentasMonthKey) cuentasMonthKey = todayISO().slice(0,7);
+    const isCurrent = cuentasMonthKey === todayISO().slice(0,7);
+    $('cuentasMonthLabel').textContent = monthLabel(cuentasMonthKey);
+    $('cuentasMonthLabel').classList.toggle('current', isCurrent);
+    $('cuentasMonthNext').disabled = isCurrent;
+    const movs = movimientosDelMes(cuentasMonthKey);
+    const ingresos = movs.filter(m=>m.tipo==='ingreso').reduce((s,m)=>s+m.monto,0);
+    const gastos = movs.filter(m=>m.tipo==='gasto').reduce((s,m)=>s+m.monto,0);
+    const saldo = ingresos - gastos;
+ 
+    $('cuentasSaldoAmount').textContent = fmtMoney(saldo);
+    $('cuentasIngresosAmount').textContent = fmtMoney(ingresos);
+    $('cuentasGastosAmount').textContent = fmtMoney(gastos);
+    document.querySelector('#cuentasHomeScreen .cuentas-summary').classList.toggle('negative', saldo<0);
+ 
+    renderCuentasChart(movs);
+ 
+    const wrap = $('cuentasWrap');
+    if(movs.length===0){
+      wrap.innerHTML = `<div class="empty-filter">${L.chartEmpty}</div>`;
+      return;
+    }
+    wrap.innerHTML = [...movs].sort((a,b)=> b.fecha.localeCompare(a.fecha) || b.id.localeCompare(a.id))
+      .map(m=> buildMovRowHTML(m, {deletable:true})).join('');
+  }
+  $('cuentasWrap').addEventListener('click', async (e)=>{
+    const btn = e.target.closest('.mov-row-del');
+    if(!btn) return;
+    const id = btn.dataset.id;
+    cuentas = cuentas.filter(m=>m.id!==id);
+    await saveCuentas();
+    renderCuentasHome();
+    showToast(t().movimientoEliminado);
+  });
+  $('cuentasBack').onclick = ()=> showScreen('cuentasHomeScreen');
+  function goToCuentasCurrentMonth(){
+    cuentasMonthKey = todayISO().slice(0,7);
+    renderCuentasHome();
+  }
+  function shiftCuentasMonth(delta){
+    const [y,m] = cuentasMonthKey.split('-').map(Number);
+    const d = new Date(y, (m-1)+delta, 1);
+    cuentasMonthKey = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+    renderCuentasHome();
+  }
+  $('cuentasMonthPrev').onclick = ()=> shiftCuentasMonth(-1);
+  $('cuentasMonthNext').onclick = ()=>{ if(!$('cuentasMonthNext').disabled) shiftCuentasMonth(1); };
+ 
+  /* ---------------- HISTORIAL DE CUENTAS (por mes) ---------------- */
+  function mesesConMovimientos(){
+    const keys = new Set(cuentas.map(m=> m.fecha.slice(0,7)));
+    return [...keys].sort().reverse();
+  }
+  function renderCuentasHistory(){
+    const L = t();
+    syncChartToggleUI();
+    const wrap = $('cuentasHistoryWrap');
+    const meses = mesesConMovimientos();
+    if(meses.length===0){
+      wrap.className = '';
+      wrap.innerHTML = `<div class="empty-filter">${L.chartEmpty}</div>`;
+      return;
+    }
+    wrap.className = 'list-wrap';
+    wrap.innerHTML = '';
+    meses.forEach(key=>{
+      const movs = movimientosDelMes(key);
+      const ingresos = movs.filter(m=>m.tipo==='ingreso').reduce((s,m)=>s+m.monto,0);
+      const gastos = movs.filter(m=>m.tipo==='gasto').reduce((s,m)=>s+m.monto,0);
+      const built = buildChartMarkup(movs, { width:280, height:90, showAxis:false, interactive:false, mode:chartMode });
+      const rows = [...movs].sort((a,b)=> b.fecha.localeCompare(a.fecha) || b.id.localeCompare(a.id)).map(m=> buildMovRowHTML(m)).join('');
+      const card = document.createElement('div');
+      card.className = 'month-chart-card';
+      card.innerHTML = `
+        <div class="month-chart-header">
+          <div class="month-chart-title">${monthLabel(key)}</div>
+          <div class="month-chart-totals"><span class="ingreso">+${fmtMoney(ingresos)}</span><span class="gasto">-${fmtMoney(gastos)}</span></div>
+        </div>
+        <div class="month-chart-svg">${built.html}</div>
+        <div class="month-chart-list">${rows}</div>
+      `;
+      wrap.appendChild(card);
+    });
+  }
+  $('cuentasHistoryBtn').onclick = ()=>{ renderCuentasHistory(); showScreen('cuentasHistoryScreen'); };
+  $('cuentasHistoryBack').onclick = ()=> showScreen('cuentasHomeScreen');
+ 
+  /* ---------------- NUEVO MOVIMIENTO ---------------- */
+  let movTipo = 'ingreso';
+  $('newMovBtn').onclick = ()=>{
+    movTipo = 'ingreso';
+    $('tipoIngresoBtn').classList.add('active');
+    $('tipoGastoBtn').classList.remove('active');
+    $('movMonto').value = '';
+    $('movDescripcion').value = '';
+    $('movFecha').value = todayISO();
+    showScreen('cuentaFormScreen');
+  };
+  $('cuentaFormBack').onclick = ()=> showScreen('cuentasHomeScreen');
+  $('movTipoTabs').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.tab-btn');
+    if(!btn) return;
+    movTipo = btn.dataset.tipo;
+    $('movTipoTabs').querySelectorAll('.tab-btn').forEach(b=> b.classList.toggle('active', b===btn));
+  });
+  ['movMonto'].forEach(id=>{
+    const el = $(id);
+    if(el) el.addEventListener('input', ()=> formatMilesInput(el));
+  });
+  $('saveMovBtn').onclick = async ()=>{
+    const monto = rawNumber($('movMonto'));
+    const descripcion = $('movDescripcion').value.trim();
+    const fecha = $('movFecha').value || todayISO();
+    if(!monto || monto<=0){ showToast(t().escribeMontoValido); return; }
+    if(!descripcion){ showToast(t().escribeDescripcionMov); return; }
+    cuentas.push({ id:Date.now().toString(), tipo:movTipo, monto, descripcion, fecha });
+    await saveCuentas();
+    renderCuentasHome();
+    showScreen('cuentasHomeScreen');
+    showToast(t().movimientoGuardado);
+  };
+ 
   /* ---------------- NOTAS ---------------- */
   function loadNotas(){
     try{ return localStorage.getItem(NOTES_KEY) || ''; }
@@ -1100,15 +1749,9 @@ body{
     clearTimeout(hint._h);
     hint._h = setTimeout(()=> hint.classList.remove('show'), 1200);
   }
-  $('notesBtn').onclick = ()=>{
-    $('notesTextarea').value = loadNotas();
-    showScreen('notesScreen');
-    $('notesTextarea').focus();
-  };
   $('notesBack').onclick = ()=>{
     saveNotas($('notesTextarea').value);
-    renderHome();
-    showScreen('homeScreen');
+    showScreen('notesScreen');
   };
   $('notesTextarea').addEventListener('input', ()=>{
     clearTimeout(notesSaveTimer);
@@ -1123,11 +1766,37 @@ body{
     clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 1500);
   }
  
+  const TAB_SCREENS = { homeScreen:'negocios', cuentasHomeScreen:'cuentas', notesScreen:'notas', settingsScreen:'ajustes' };
   function showScreen(id){
-    ['homeScreen','listScreen','formScreen','detailScreen','historyScreen','globalHistoryScreen','newBusinessScreen','notesScreen','settingsScreen'].forEach(s=>{
+    ['welcomeScreen','homeScreen','listScreen','formScreen','detailScreen','historyScreen','globalHistoryScreen','newBusinessScreen','notesScreen','settingsScreen','cuentasHomeScreen','cuentaFormScreen','cuentasHistoryScreen'].forEach(s=>{
       $(s).classList.toggle('hidden', s!==id);
     });
+    const tab = TAB_SCREENS[id];
+    $('bottomNav').classList.toggle('hidden', !tab);
+    if(tab){
+      $('bottomNav').querySelectorAll('.nav-item').forEach(b=> b.classList.toggle('active', b.dataset.tab===tab));
+    }
   }
+  function goTab(tab){
+    if(!$('notesScreen').classList.contains('hidden')) saveNotas($('notesTextarea').value);
+    let targetId = null;
+    if(tab==='negocios'){ renderHome(); targetId='homeScreen'; }
+    else if(tab==='cuentas'){ goToCuentasCurrentMonth(); targetId='cuentasHomeScreen'; }
+    else if(tab==='notas'){ $('notesTextarea').value = loadNotas(); targetId='notesScreen'; }
+    else if(tab==='ajustes'){ renderSettingsScreen(); targetId='settingsScreen'; }
+    if(!targetId) return;
+    showScreen(targetId);
+    const el = $(targetId);
+    el.classList.remove('screen-enter');
+    void el.offsetWidth;
+    el.classList.add('screen-enter');
+    setTimeout(()=> el.classList.remove('screen-enter'), 320);
+  }
+  $('bottomNav').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.nav-item');
+    if(!btn) return;
+    goTab(btn.dataset.tab);
+  });
  
   /* ---------------- CALC ---------------- */
   function computeStats(n){
@@ -1175,7 +1844,6 @@ body{
     const wrap = $('homeWrap');
     const summaryCard = $('homeSummaryCard');
     if(negocios.length===0){
-      $('homeScreen').classList.add('welcome-bg');
       $('newBusinessBtn').textContent = L.startBtn;
       summaryCard.classList.add('hidden');
       wrap.className = 'welcome';
@@ -1186,7 +1854,6 @@ body{
       `;
       return;
     }
-    $('homeScreen').classList.remove('welcome-bg');
     $('newBusinessBtn').textContent = L.newBusinessBtnPlus;
     summaryCard.classList.remove('hidden');
     wrap.className = 'list-wrap';
@@ -1477,6 +2144,7 @@ body{
   $('newBtn').onclick = ()=>{
     $('fName').value=''; $('fValor').value=''; $('fFecha').value = todayISO();
     $('fGracia').value=''; $('fPorcentaje').value='1'; $('fFrecuencia').value='1';
+    $('fDescripcion').value='';
     interesActivo = false;
     $('interesSwitch').classList.remove('on');
     $('interesFields').classList.add('hidden');
@@ -1494,11 +2162,12 @@ body{
     const nombre = $('fName').value.trim();
     const valor = rawNumber($('fValor'));
     const fecha = $('fFecha').value || todayISO();
+    const descripcion = $('fDescripcion').value.trim();
     if(!nombre){ showToast(t().escribeNombrePersona); return; }
     if(!valor || valor<=0){ showToast(t().escribeValorValido); return; }
     const persona = {
       id: Date.now().toString(),
-      nombre, valor, fecha,
+      nombre, valor, fecha, descripcion,
       abonos: [],
       interes: interesActivo ? {
         activo:true,
@@ -1533,18 +2202,30 @@ body{
     const incremento = n.valor * (porcentaje/100);
     const maxShow = 30;
     const start = Math.max(1, periodos-maxShow+1);
-    let rows = '';
-    for(let i=periodos; i>=start; i--){
+    const visibleCount = 4;
+    const totalRows = periodos - start + 1;
+    function buildRow(i){
       const periodDate = addDays(n.fecha, gracia + i*frecuencia);
       const cumPercent = Math.min(100, i*porcentaje);
       const cumMonto = n.valor * (cumPercent/100);
-      rows += `<div class="abono-row"><div><div class="amt mono" style="color:var(--amber);">+${fmtMoney(incremento)}</div><div class="date">${fmtDate(periodDate)} · ${L.acumuladoLbl} ${Math.round(cumPercent*10)/10}% (${fmtMoney(cumMonto)})</div></div></div>`;
+      return `<div class="abono-row"><div><div class="amt mono" style="color:var(--amber);">+${fmtMoney(incremento)}</div><div class="date">${fmtDate(periodDate)} · ${L.acumuladoLbl} ${Math.round(cumPercent*10)/10}% (${fmtMoney(cumMonto)})</div></div></div>`;
+    }
+    let visibleRows = '', extraRows = '';
+    let idx = 0;
+    for(let i=periodos; i>=start; i--){
+      if(idx < visibleCount) visibleRows += buildRow(i);
+      else extraRows += buildRow(i);
+      idx++;
     }
     const hiddenNote = periodos>maxShow ? `<div class="interest-sub" style="text-align:center; padding-top:2px;">${L.mostrandoUltimos(maxShow, periodos)}</div>` : '';
+    const extraBlock = totalRows>visibleCount
+      ? `<div class="abono-list interest-extra hidden">${extraRows}</div><button type="button" class="interest-more-btn" data-more-label="${L.mostrarMasDias(totalRows-visibleCount)}" data-less-label="${L.mostrarMenosDias}">${L.mostrarMasDias(totalRows-visibleCount)}</button>`
+      : '';
     return `
       <div style="margin-top:2px;">
         <div style="font-size:12.5px; color:var(--ink-dim); font-weight:600; margin-bottom:8px;">${L.historialInteresHeading(s.diasMora, periodos)}</div>
-        <div class="abono-list">${rows}</div>
+        <div class="abono-list">${visibleRows}</div>
+        ${extraBlock}
         ${hiddenNote}
       </div>`;
   }
@@ -1591,6 +2272,13 @@ body{
     const s = computeStats(n);
     $('dName').textContent = n.nombre;
     $('dDate').textContent = fmtDate(n.fecha);
+    if(n.descripcion){
+      $('dDescripcion').textContent = n.descripcion;
+      $('dDescripcion').classList.remove('hidden');
+    } else {
+      $('dDescripcion').textContent = '';
+      $('dDescripcion').classList.add('hidden');
+    }
     $('shareName').textContent = n.nombre;
     $('dSaldo').textContent = fmtMoney(s.saldo);
     $('dBarFill').style.width = s.progreso+'%';
@@ -1625,6 +2313,16 @@ body{
     }
   }
   $('detailBack').onclick = ()=>{ renderList(); showScreen('listScreen'); };
+ 
+  $('interestBox').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.interest-more-btn');
+    if(!btn) return;
+    const wrap = btn.previousElementSibling;
+    if(!wrap || !wrap.classList.contains('interest-extra')) return;
+    const willShow = wrap.classList.contains('hidden');
+    wrap.classList.toggle('hidden');
+    btn.textContent = willShow ? btn.dataset.lessLabel : btn.dataset.moreLabel;
+  });
  
   $('editValorBtn').onclick = ()=>{
     const n = currentBusiness().personas.find(x=>x.id===currentId);
@@ -1705,6 +2403,17 @@ body{
   };
  
   /* ---------------- NUEVO NEGOCIO ---------------- */
+  $('welcomeStartBtn').onclick = ()=>{
+    renderHome();
+    $('welcomeScreen').classList.add('welcome-exit');
+    setTimeout(()=>{
+      $('welcomeScreen').classList.remove('welcome-exit');
+      showScreen('homeScreen');
+      $('homeScreen').classList.add('screen-enter');
+      setTimeout(()=> $('homeScreen').classList.remove('screen-enter'), 420);
+    }, 280);
+  };
+  $('businessesBack').onclick = ()=> showScreen('homeScreen');
   $('newBusinessBtn').onclick = ()=>{
     $('newBusinessInput').value = '';
     $('newBusinessFecha').value = todayISO();
@@ -1725,6 +2434,7 @@ body{
  
   applyTranslations();
   loadNegocios().then(renderHome);
+  loadCuentas();
 })();
 </script>
 </body>
