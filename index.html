@@ -596,6 +596,7 @@ body{
       <div class="chart-toggle" id="chartToggle">
         <button type="button" class="chart-toggle-btn active" data-mode="line" id="chartModeLine">Línea</button>
         <button type="button" class="chart-toggle-btn" data-mode="bar" id="chartModeBar">Barras</button>
+        <button type="button" class="chart-toggle-btn" data-mode="pie" id="chartModePie">Circular</button>
       </div>
       <div class="chart-tooltip" id="chartTooltip">Toca o desliza sobre la gráfica</div>
       <div id="cuentasChartWrap"></div>
@@ -628,6 +629,7 @@ body{
     <div class="chart-toggle" id="historyChartToggle">
       <button type="button" class="chart-toggle-btn active" data-mode="line" id="historyChartModeLine">Línea</button>
       <button type="button" class="chart-toggle-btn" data-mode="bar" id="historyChartModeBar">Barras</button>
+      <button type="button" class="chart-toggle-btn" data-mode="pie" id="historyChartModePie">Circular</button>
     </div>
     <div class="list-wrap" id="cuentasHistoryWrap"></div>
   </div>
@@ -928,7 +930,8 @@ body{
       cuentasTitle:'Cuentas', cuentasSaldoLabel:'SALDO DEL MES',
       ingresoLbl:'Ingreso', gastoLbl:'Gasto',
       chartTitle:'Evolución del saldo', chartEmpty:'Aún no tienes movimientos este mes',
-      chartModeLine:'Línea', chartModeBar:'Barras',
+      chartModeLine:'Línea', chartModeBar:'Barras', chartModePie:'Circular',
+      gananciasLbl:'Ganancias', perdidasLbl:'Pérdidas',
       chartTooltipHint:'Toca o desliza sobre la gráfica', cuentasHistoryTitle:'Historial',
       newMovBtn:'+ Nuevo movimiento', cuentaFormTitle:'Nuevo movimiento',
       tipoIngresoBtn:'Ingreso', tipoGastoBtn:'Gasto',
@@ -994,7 +997,8 @@ body{
       cuentasTitle:'Accounts', cuentasSaldoLabel:'BALANCE THIS MONTH',
       ingresoLbl:'Income', gastoLbl:'Expense',
       chartTitle:'Balance over time', chartEmpty:'You don\u2019t have any activity this month yet',
-      chartModeLine:'Line', chartModeBar:'Bars',
+      chartModeLine:'Line', chartModeBar:'Bars', chartModePie:'Pie',
+      gananciasLbl:'Gains', perdidasLbl:'Losses',
       chartTooltipHint:'Tap or drag over the chart', cuentasHistoryTitle:'History',
       newMovBtn:'+ New transaction', cuentaFormTitle:'New transaction',
       tipoIngresoBtn:'Income', tipoGastoBtn:'Expense',
@@ -1060,7 +1064,8 @@ body{
       cuentasTitle:'Contas', cuentasSaldoLabel:'SALDO DO MÊS',
       ingresoLbl:'Receita', gastoLbl:'Despesa',
       chartTitle:'Evolução do saldo', chartEmpty:'Você ainda não tem movimentações este mês',
-      chartModeLine:'Linha', chartModeBar:'Barras',
+      chartModeLine:'Linha', chartModeBar:'Barras', chartModePie:'Circular',
+      gananciasLbl:'Ganhos', perdidasLbl:'Perdas',
       chartTooltipHint:'Toque ou deslize sobre o gráfico', cuentasHistoryTitle:'Histórico',
       newMovBtn:'+ Nova transação', cuentaFormTitle:'Nova transação',
       tipoIngresoBtn:'Receita', tipoGastoBtn:'Despesa',
@@ -1178,9 +1183,11 @@ body{
     $('chartTitle').textContent = L.chartTitle;
     $('chartModeLine').textContent = L.chartModeLine;
     $('chartModeBar').textContent = L.chartModeBar;
+    $('chartModePie').textContent = L.chartModePie;
     $('cuentasHistoryTitle').textContent = L.cuentasHistoryTitle;
     $('historyChartModeLine').textContent = L.chartModeLine;
     $('historyChartModeBar').textContent = L.chartModeBar;
+    $('historyChartModePie').textContent = L.chartModePie;
     $('newMovBtn').textContent = L.newMovBtn;
     $('cuentaFormTitle').textContent = L.cuentaFormTitle;
     $('tipoIngresoBtn').textContent = L.tipoIngresoBtn;
@@ -1489,8 +1496,10 @@ body{
   function syncChartToggleUI(){
     $('chartModeLine').classList.toggle('active', chartMode==='line');
     $('chartModeBar').classList.toggle('active', chartMode==='bar');
+    $('chartModePie').classList.toggle('active', chartMode==='pie');
     $('historyChartModeLine').classList.toggle('active', chartMode==='line');
     $('historyChartModeBar').classList.toggle('active', chartMode==='bar');
+    $('historyChartModePie').classList.toggle('active', chartMode==='pie');
   }
   $('chartToggle').addEventListener('click', (e)=>{
     const btn = e.target.closest('.chart-toggle-btn');
@@ -1508,8 +1517,65 @@ body{
     syncChartToggleUI();
     renderCuentasHistory();
   });
+  function buildPieMarkup(movs, opts){
+    opts = opts || {};
+    const W = opts.width || 320, H = opts.height || 176;
+    if(movs.length===0){
+      return { html:`<div class="chart-empty">${t().chartEmpty}</div>`, data:null };
+    }
+    const ingresos = movs.filter(m=>m.tipo==='ingreso').reduce((s,m)=>s+m.monto,0);
+    const gastos = movs.filter(m=>m.tipo==='gasto').reduce((s,m)=>s+m.monto,0);
+    const total = ingresos + gastos;
+    if(total<=0){
+      return { html:`<div class="chart-empty">${t().chartEmpty}</div>`, data:null };
+    }
+    const L = t();
+    const fracIngreso = ingresos/total;
+    const pctIngreso = Math.round(fracIngreso*1000)/10;
+    const pctGasto = Math.round((100-pctIngreso)*10)/10;
+    const compact = H < 140;
+ 
+    let bodyMarkup;
+    if(compact){
+      const R = 24, SW = 10, cx = 42, cy = H/2;
+      const circumference = 2*Math.PI*R;
+      const ingresoLen = circumference*fracIngreso;
+      const gastoLen = circumference - ingresoLen;
+      const legendX = cx + R + SW/2 + 20;
+      bodyMarkup = `
+        <g transform="translate(${cx},${cy}) rotate(-90)">
+          <circle r="${R}" fill="none" stroke="var(--surface2)" stroke-width="${SW}"></circle>
+          <circle r="${R}" fill="none" stroke="var(--green)" stroke-width="${SW}" stroke-linecap="butt" stroke-dasharray="${ingresoLen.toFixed(2)} ${(circumference-ingresoLen).toFixed(2)}"></circle>
+          <circle r="${R}" fill="none" stroke="var(--red)" stroke-width="${SW}" stroke-linecap="butt" stroke-dasharray="${gastoLen.toFixed(2)} ${(circumference-gastoLen).toFixed(2)}" stroke-dashoffset="${(-ingresoLen).toFixed(2)}"></circle>
+        </g>
+        <text x="${legendX}" y="${cy-8}" font-size="11" font-weight="700" fill="var(--green)" font-family="'Inter',sans-serif">${L.gananciasLbl} ${pctIngreso}%</text>
+        <text x="${legendX}" y="${cy+14}" font-size="11" font-weight="700" fill="var(--red)" font-family="'Inter',sans-serif">${L.perdidasLbl} ${pctGasto}%</text>
+      `;
+    } else {
+      const R = 46, SW = 20, cx = W/2, cy = 72;
+      const circumference = 2*Math.PI*R;
+      const ingresoLen = circumference*fracIngreso;
+      const gastoLen = circumference - ingresoLen;
+      bodyMarkup = `
+        <g transform="translate(${cx},${cy}) rotate(-90)">
+          <circle r="${R}" fill="none" stroke="var(--surface2)" stroke-width="${SW}"></circle>
+          <circle r="${R}" fill="none" stroke="var(--green)" stroke-width="${SW}" stroke-linecap="butt" stroke-dasharray="${ingresoLen.toFixed(2)} ${(circumference-ingresoLen).toFixed(2)}"></circle>
+          <circle r="${R}" fill="none" stroke="var(--red)" stroke-width="${SW}" stroke-linecap="butt" stroke-dasharray="${gastoLen.toFixed(2)} ${(circumference-gastoLen).toFixed(2)}" stroke-dashoffset="${(-ingresoLen).toFixed(2)}"></circle>
+        </g>
+        <text x="${cx}" y="146" text-anchor="middle" font-size="13" font-weight="700" fill="var(--green)" font-family="'Inter',sans-serif">${L.gananciasLbl} · ${pctIngreso}%</text>
+        <text x="${cx}" y="166" text-anchor="middle" font-size="13" font-weight="700" fill="var(--red)" font-family="'Inter',sans-serif">${L.perdidasLbl} · ${pctGasto}%</text>
+      `;
+    }
+ 
+    const html = `
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%; height:${H}px; display:block;">
+        ${bodyMarkup}
+      </svg>`;
+    return { html, data:null };
+  }
   function buildChartMarkup(movs, opts){
     opts = opts || {};
+    if(opts.mode==='pie') return buildPieMarkup(movs, opts);
     const W = opts.width || 320, H = opts.height || 176;
     const showAxis = opts.showAxis !== false;
     const interactive = !!opts.interactive;
